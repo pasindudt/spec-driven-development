@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spec Driven Development — From Vibe Coding to Agentic Engineering</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --border: #2a2a3a;
+      --accent: #7c6af7;
+      --accent2: #a78bfa;
+      --accent3: #38bdf8;
+      --danger: #f87171;
+      --success: #34d399;
+      --text: #e8e8f0;
+      --muted: #888899;
+      --faint: #3a3a50;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── FONTS ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); font-size: 0.85rem; text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124,106,247,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(56,189,248,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(124,106,247,0.12);
+      border: 1px solid rgba(124,106,247,0.3);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--accent2);
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero-badge::before { content: '◆'; font-size: 0.6rem; }
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      max-width: 14ch;
+      margin: 0 auto 1.5rem;
+    }
+    .hero h1 span.gradient {
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 54ch;
+      margin: 0 auto 3rem;
+      font-weight: 400;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); transform: translateY(-1px); }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--faint); font-size: 0.75rem;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-intro {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ── COMPARISON ── */
+    .comparison {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--border);
+    }
+    .compare-col {
+      background: var(--surface);
+      padding: 2rem;
+    }
+    .compare-col:first-child { border-right: none; }
+    .compare-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+    .compare-pill {
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .pill-bad { background: rgba(248,113,113,0.15); color: var(--danger); }
+    .pill-good { background: rgba(52,211,153,0.12); color: var(--success); }
+    .compare-title { font-size: 1.2rem; font-weight: 700; }
+    .compare-items { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .compare-items li {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      font-size: 0.9rem; color: var(--muted); line-height: 1.5;
+    }
+    .compare-items li .icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+    /* Code snippets in compare */
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+    .code-block .comment { color: var(--faint); }
+    .code-block .keyword { color: var(--accent2); }
+    .code-block .string { color: var(--success); }
+    .code-block .fn { color: var(--accent3); }
+
+    /* ── INTERACTIVE TIMELINE ── */
+    .timeline-section { background: var(--bg); }
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 2rem;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent3));
+      border-radius: 2px;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 2.5rem;
+      padding: 1.5rem 0 1.5rem 5.5rem;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-radius: 12px;
+    }
+    .timeline-item:hover { background: rgba(124,106,247,0.04); }
+    .timeline-item.active { background: rgba(124,106,247,0.07); }
+    .timeline-dot {
+      position: absolute;
+      left: calc(2rem - 9px);
+      top: 2rem;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--faint);
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem;
+    }
+    .timeline-item.active .timeline-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(124,106,247,0.5);
+    }
+    .timeline-content { flex: 1; }
+    .timeline-step {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+    .timeline-content h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .timeline-content p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+    .timeline-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s;
+      opacity: 0;
+    }
+    .timeline-item.active .timeline-detail {
+      max-height: 300px;
+      opacity: 1;
+    }
+    .timeline-detail-inner {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--surface2);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .timeline-detail-inner strong { color: var(--text); }
+
+    /* ── PRINCIPLES ── */
+    .principles-section { background: var(--bg2); border-top: 1px solid var(--border); }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--border);
+    }
+    .principle-card {
+      background: var(--surface);
+      padding: 2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .principle-card:hover { background: var(--surface2); }
+    .principle-card.active { background: var(--surface2); }
+    .principle-card.active::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0;
+    }
+    .principle-num {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--faint);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .principle-icon { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+    .principle-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .principle-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .principle-expand {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+      display: none;
+    }
+    .principle-card.active .principle-expand { display: block; }
+
+    /* ── QUIZ ── */
+    .quiz-section { background: var(--bg); }
+    .quiz-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .quiz-progress {
+      display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    }
+    .quiz-progress-bar {
+      height: 3px;
+      flex: 1;
+      border-radius: 4px;
+      background: var(--faint);
+      transition: background 0.3s;
+    }
+    .quiz-progress-bar.done { background: var(--accent); }
+    .quiz-progress-bar.current { background: var(--accent2); }
+    .quiz-q {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .quiz-question { font-size: 1.15rem; font-weight: 600; margin-bottom: 1.75rem; line-height: 1.4; }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+    .quiz-option:hover { border-color: var(--accent); background: rgba(124,106,247,0.05); }
+    .quiz-option.selected-correct {
+      border-color: var(--success);
+      background: rgba(52,211,153,0.07);
+      color: var(--success);
+    }
+    .quiz-option.selected-wrong {
+      border-color: var(--danger);
+      background: rgba(248,113,113,0.07);
+      color: var(--danger);
+    }
+    .quiz-option.show-correct { border-color: var(--success); color: var(--success); }
+    .quiz-option-letter {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.75rem; font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .quiz-feedback {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: rgba(52,211,153,0.1); color: var(--success); border: 1px solid rgba(52,211,153,0.2); }
+    .quiz-feedback.wrong { background: rgba(248,113,113,0.1); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
+    .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; }
+    .quiz-score-bar { display: flex; gap: 0.35rem; }
+    .quiz-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+    .quiz-dot.correct { background: var(--success); }
+    .quiz-dot.wrong { background: var(--danger); }
+
+    /* Result screen */
+    .quiz-result { text-align: center; }
+    .quiz-result .score-big {
+      font-size: 4rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent2), var(--accent3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .quiz-result p { color: var(--muted); margin: 0.5rem 0 2rem; }
+
+    /* ── SPEC EXAMPLE ── */
+    .spec-section { background: var(--bg2); border-top: 1px solid var(--border); }
+    .spec-tabs {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+      overflow-x: auto;
+    }
+    .spec-tab {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .spec-tab:hover { color: var(--text); }
+    .spec-tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+    .spec-pane { display: none; }
+    .spec-pane.active { display: block; }
+    .spec-code {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .sc-comment { color: #555570; }
+    .sc-key { color: var(--accent3); }
+    .sc-val { color: var(--success); }
+    .sc-type { color: var(--accent2); }
+    .sc-heading { color: var(--text); font-weight: 600; }
+    .sc-dim { color: var(--faint); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── UTILITIES ── */
+    .divider { height: 1px; background: var(--border); margin: 0; }
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      background: rgba(124,106,247,0.12);
+      color: var(--accent2);
+      border: 1px solid rgba(124,106,247,0.2);
+    }
+
+    @media (max-width: 768px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .timeline::before { left: 1rem; }
+      .timeline-item { padding-left: 3.5rem; }
+      .timeline-dot { left: calc(1rem - 9px); }
+      nav { padding: 0 1rem; }
+      .nav-links { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">// spec-driven-dev</div>
+  <ul class="nav-links">
+    <li><a href="#why">Why</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#principles">Principles</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#spec">Spec Examples</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-badge">A guide for developers</div>
+  <h1>Stop vibe coding.<br><span class="gradient">Start engineering.</span></h1>
+  <p class="hero-sub">
+    Discover why Spec Driven Development is the foundation of reliable agentic engineering — 
+    and how to make the shift from intuition-led hacking to precise, reproducible systems.
+  </p>
+  <div class="hero-cta">
+    <a href="#why" class="btn btn-primary">See why it matters ↓</a>
+    <a href="#quiz" class="btn btn-ghost">Take the quiz</a>
+  </div>
+  <div class="scroll-hint">↓</div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comparison" id="why">
+  <div class="container">
+    <div class="section-label">The Problem</div>
+    <h2>Vibe coding vs. Agentic Engineering</h2>
+    <p class="section-intro">
+      Vibe coding gets you started fast. It gets you stuck faster. 
+      Here's what separates intuition-driven hacks from production-grade agentic systems.
+    </p>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-header">
+          <span class="compare-pill pill-bad">Vibe Coding</span>
+          <span class="compare-title">🎲 Feels productive</span>
+        </div>
+        <ul class="compare-items">
+          <li><span class="icon">🎯</span> "It works on my machine" is the only spec</li>
+          <li><span class="icon">🌀</span> Requirements live inside one developer's head</li>
+          <li><span class="icon">💥</span> AI agents hallucinate missing context and fill gaps wrong</li>
+          <li><span class="icon">🔁</span> Every change risks breaking unknown side effects</li>
+          <li><span class="icon">🤐</span> Impossible to hand off or scale to a team</li>
+          <li><span class="icon">🕳️</span> No contract between intent, implementation, and test</li>
+        </ul>
+        <div class="code-block">
+<span class="comment">// Vibe-coded function</span>
+<span class="keyword">function</span> <span class="fn">processOrder</span>(data) {
+  <span class="comment">// TODO: validate maybe?</span>
+  <span class="keyword">const</span> result = doStuff(data);
+  <span class="comment">// seems to work ¯\_(ツ)_/¯</span>
+  <span class="keyword">return</span> result;
+}</div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-header">
+          <span class="compare-pill pill-good">Spec Driven Dev</span>
+          <span class="compare-title">⚡ Actually engineered</span>
+        </div>
+        <ul class="compare-items">
+          <li><span class="icon">📄</span> Behavior is written as a machine-readable spec first</li>
+          <li><span class="icon">🤖</span> Agents receive unambiguous context — no guessing</li>
+          <li><span class="icon">✅</span> Tests are derived directly from the spec</li>
+          <li><span class="icon">🔗</span> Every component has a contract: inputs, outputs, invariants</li>
+          <li><span class="icon">📦</span> Reproducible across any agent, team, or time</li>
+          <li><span class="icon">🧭</span> Change is predictable — the spec is the ground truth</li>
+        </ul>
+        <div class="code-block">
+<span class="comment"># spec: order-processing.yaml</span>
+<span class="keyword">function</span>: processOrder
+<span class="keyword">inputs</span>:
+  - name: <span class="string">orderId</span>    type: <span class="fn">UUID</span>
+  - name: <span class="string">items</span>      type: <span class="fn">Item[]</span>  min: 1
+<span class="keyword">invariants</span>:
+  - total &gt; 0
+  - all items in stock
+<span class="keyword">outputs</span>:
+  - <span class="string">confirmation</span>: OrderConfirmation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE / HOW -->
+<section class="timeline-section" id="how">
+  <div class="container">
+    <div class="section-label">The Process</div>
+    <h2>How Spec Driven Development works</h2>
+    <p class="section-intro">
+      Five steps that transform ambiguous intent into deterministic, agent-ready systems.
+      Click each step to expand.
+    </p>
+    <div class="timeline" id="timeline">
+
+      <div class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 01</div>
+          <h3>Write the Spec First</h3>
+          <p>Before any code, before any prompt — write what the system <em>must</em> do.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              A spec is a <strong>precise, machine-readable description of behavior</strong>. It answers: 
+              what are the inputs? outputs? invariants? edge cases? side effects? 
+              It doesn't say <em>how</em> — only <em>what</em>. 
+              Write it in YAML, Markdown, or a structured format your agents can parse. 
+              This is the <strong>single source of truth</strong> that every downstream step references.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 02</div>
+          <h3>Generate Tests from the Spec</h3>
+          <p>Tests aren't written after the fact — they're derived directly from spec invariants.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              Each invariant in the spec becomes a test assertion. Each edge case becomes a test scenario.
+              Because tests come from the spec — not from reading the code — they catch 
+              <strong>intent violations</strong>, not just implementation bugs. 
+              You can automate this with agents: feed the spec, get a test suite back.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 03</div>
+          <h3>Implement Against the Spec</h3>
+          <p>Pass the spec (not just a vague prompt) to your AI agent or developer.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              With a spec in hand, an AI coding agent has <strong>unambiguous context</strong>. 
+              It knows exactly what to build, what to validate, and what failure looks like. 
+              There's no room for hallucinated assumptions. 
+              The implementation is constrained by the spec — not the agent's best guess at 
+              what you probably meant.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">4</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 04</div>
+          <h3>Validate Against Invariants</h3>
+          <p>Run the spec-derived tests. Any failure points back to the spec, not to intuition.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              When tests fail, <strong>the spec tells you exactly which invariant was violated</strong>.
+              This is debugging with precision — not archaeology. You know what broke, 
+              why it's wrong (the spec says so), and what correct behavior looks like. 
+              Fix the implementation or revise the spec — both are explicit decisions.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">5</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 05</div>
+          <h3>Evolve Specs, Not Just Code</h3>
+          <p>When requirements change, update the spec. Everything else follows.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              In vibe coding, requirements drift silently. In SDD, 
+              <strong>every change is a spec change first</strong>. 
+              Update the spec → regenerate/update tests → update implementation.
+              The diff in the spec file <em>is</em> the changelog. 
+              Agents can be re-run against the new spec without any human re-explanation.
+              This is what makes agentic engineering <strong>composable and repeatable</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section class="principles-section" id="principles">
+  <div class="container">
+    <div class="section-label">Core Tenets</div>
+    <h2>The six principles of SDD</h2>
+    <p class="section-intro">
+      These aren't just best practices. They're the load-bearing walls of agentic engineering.
+      Click each to learn more.
+    </p>
+    <div class="principles-grid">
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">01</div>
+        <span class="principle-icon">📋</span>
+        <h3>Spec is the Source of Truth</h3>
+        <p>The spec outranks the code, the tests, and memory. When they conflict, fix the spec first.</p>
+        <div class="principle-expand">
+          In a spec-driven system, the spec is the <strong>authoritative description of intent</strong>. 
+          If your code passes tests but violates the spec, your tests are wrong. 
+          Every agent, every developer, every reviewer reads the same spec.
+        </div>
+      </div>
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">02</div>
+        <span class="principle-icon">🎯</span>
+        <h3>Precision over Intuition</h3>
+        <p>Ambiguity is technical debt. Every undefined behavior is a future bug waiting to happen.</p>
+        <div class="principle-expand">
+          Vague intent produces vague output. When you write "it should handle errors gracefully," 
+          you've written nothing. A spec says: <strong>"on input validation failure, return status 422 
+          with a typed error payload"</strong>. Agents can implement that. They can't implement vibes.
+        </div>
+      </div>
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">03</div>
+        <span class="principle-icon">🤖</span>
+        <h3>Agent-First Design</h3>
+        <p>Design your specs to be consumed by machines, not just read by humans.</p>
+        <div class="principle-expand">
+          Specs should be <strong>structured, parseable, and self-contained</strong>. 
+          An AI agent should be able to pick up a spec cold and produce a correct implementation 
+          without any additional context. If it can't, the spec is incomplete.
+        </div>
+      </div>
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">04</div>
+        <span class="principle-icon">🔗</span>
+        <h3>Traceability</h3>
+        <p>Every test, every implementation decision traces back to a spec statement.</p>
+        <div class="principle-expand">
+          If you can't point to the spec line that justifies a line of code, 
+          that code is unspecified behavior — a liability. 
+          <strong>Full traceability</strong> means every artifact in your system 
+          is grounded in explicit, reviewable intent.
+        </div>
+      </div>
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">05</div>
+        <span class="principle-icon">♻️</span>
+        <h3>Composability</h3>
+        <p>Specs compose. Small, precise specs combine into larger systems without friction.</p>
+        <div class="principle-expand">
+          SDD enables <strong>modular, reusable system design</strong>. 
+          A spec for authentication composes with a spec for authorization. 
+          An agent that understands one spec can be orchestrated into a pipeline 
+          because every interface is explicit.
+        </div>
+      </div>
+      <div class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">06</div>
+        <span class="principle-icon">🔄</span>
+        <h3>Continuous Alignment</h3>
+        <p>Specs stay alive. They are maintained, versioned, and reviewed like production code.</p>
+        <div class="principle-expand">
+          A spec that gets out of date is worse than no spec — it's misleading. 
+          <strong>Version your specs</strong>, review spec changes as seriously as code changes, 
+          and automate spec validation in CI. 
+          The spec's health is the system's health.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="section-label">Test Yourself</div>
+    <h2>Are you a vibe coder?</h2>
+    <p class="section-intro">Five quick questions to find out where you stand — and what to do next.</p>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <div id="quiz-body"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPEC EXAMPLE -->
+<section class="spec-section" id="spec">
+  <div class="container">
+    <div class="section-label">Real Examples</div>
+    <h2>What a spec actually looks like</h2>
+    <p class="section-intro">
+      Three real spec formats for the same feature — pick the one that fits your stack.
+    </p>
+    <div class="spec-tabs">
+      <div class="spec-tab active" onclick="switchTab(this, 'yaml')">YAML Spec</div>
+      <div class="spec-tab" onclick="switchTab(this, 'md')">Markdown Spec</div>
+      <div class="spec-tab" onclick="switchTab(this, 'ts')">TypeScript Contract</div>
+    </div>
+
+    <div class="spec-pane active" id="tab-yaml">
+      <div class="spec-code"><span class="sc-comment"># spec/auth/login.yaml</span>
+<span class="sc-comment"># Spec Driven Development — Login Feature</span>
+
+<span class="sc-key">feature</span>: <span class="sc-val">user-login</span>
+<span class="sc-key">version</span>: <span class="sc-val">"1.2.0"</span>
+<span class="sc-key">owner</span>: <span class="sc-val">auth-team</span>
+<span class="sc-key">status</span>: <span class="sc-val">approved</span>
+
+<span class="sc-key">inputs</span>:
+  - <span class="sc-key">name</span>: <span class="sc-val">email</span>
+    <span class="sc-key">type</span>: <span class="sc-type">string</span>
+    <span class="sc-key">format</span>: <span class="sc-val">email</span>
+    <span class="sc-key">required</span>: <span class="sc-val">true</span>
+  - <span class="sc-key">name</span>: <span class="sc-val">password</span>
+    <span class="sc-key">type</span>: <span class="sc-type">string</span>
+    <span class="sc-key">minLength</span>: <span class="sc-val">8</span>
+    <span class="sc-key">required</span>: <span class="sc-val">true</span>
+
+<span class="sc-key">outputs</span>:
+  <span class="sc-key">success</span>:
+    <span class="sc-key">status</span>: <span class="sc-val">200</span>
+    <span class="sc-key">body</span>: <span class="sc-type">AuthToken</span>
+  <span class="sc-key">failure</span>:
+    <span class="sc-key">invalid_credentials</span>: { <span class="sc-key">status</span>: <span class="sc-val">401</span>, <span class="sc-key">code</span>: <span class="sc-val">"AUTH_001"</span> }
+    <span class="sc-key">invalid_input</span>:     { <span class="sc-key">status</span>: <span class="sc-val">422</span>, <span class="sc-key">code</span>: <span class="sc-val">"AUTH_002"</span> }
+    <span class="sc-key">rate_limited</span>:      { <span class="sc-key">status</span>: <span class="sc-val">429</span>, <span class="sc-key">code</span>: <span class="sc-val">"AUTH_003"</span> }
+
+<span class="sc-key">invariants</span>:
+  - <span class="sc-val">password MUST NOT be stored in plaintext</span>
+  - <span class="sc-val">failed attempts MUST be rate-limited after 5 tries</span>
+  - <span class="sc-val">token expiry MUST be ≤ 24h</span>
+  - <span class="sc-val">response time MUST be &lt; 400ms at p95</span>
+
+<span class="sc-key">side_effects</span>:
+  - <span class="sc-val">emit: auth.login.success (on success)</span>
+  - <span class="sc-val">emit: auth.login.failed  (on failure)</span>
+  - <span class="sc-val">write: audit_log table</span></div>
+    </div>
+
+    <div class="spec-pane" id="tab-md">
+      <div class="spec-code"><span class="sc-heading"># Feature Spec: User Login</span>
+<span class="sc-dim">Version: 1.2.0 | Status: Approved | Owner: auth-team</span>
+
+<span class="sc-heading">## Purpose</span>
+Authenticate a registered user with email + password and return
+a short-lived JWT. All auth events are audited.
+
+<span class="sc-heading">## Inputs</span>
+| Field    | Type   | Rules                          |
+|----------|--------|--------------------------------|
+| email    | string | required, valid email format   |
+| password | string | required, min 8 chars          |
+
+<span class="sc-heading">## Success Response — 200</span>
+<span class="sc-val">{ token: string (JWT), expiresAt: ISO8601 }</span>
+
+<span class="sc-heading">## Error Responses</span>
+| Code     | Status | Trigger                  |
+|----------|--------|--------------------------|
+| AUTH_001 | 401    | Wrong email or password  |
+| AUTH_002 | 422    | Malformed input          |
+| AUTH_003 | 429    | &gt;5 failed attempts / min  |
+
+<span class="sc-heading">## Invariants (MUST hold at all times)</span>
+- [ ] Passwords stored as bcrypt hash (cost ≥ 12)
+- [ ] Failed attempts rate-limited after 5 tries / minute
+- [ ] Token TTL ≤ 24 hours
+- [ ] p95 response time &lt; 400ms
+
+<span class="sc-heading">## Side Effects</span>
+- Emit <span class="sc-val">auth.login.success</span> or <span class="sc-val">auth.login.failed</span> event
+- Write row to <span class="sc-val">audit_log</span> table on every attempt</div>
+    </div>
+
+    <div class="spec-pane" id="tab-ts">
+      <div class="spec-code"><span class="sc-comment">// spec/auth/login.contract.ts</span>
+<span class="sc-comment">// TypeScript contract — machine-readable, type-safe spec</span>
+
+<span class="sc-key">interface</span> <span class="sc-type">LoginInput</span> {
+  email:    <span class="sc-type">Email</span>;       <span class="sc-comment">// validated email string</span>
+  password: <span class="sc-type">MinLen</span>&lt;<span class="sc-val">8</span>&gt;;  <span class="sc-comment">// minimum 8 characters</span>
+}
+
+<span class="sc-key">type</span> <span class="sc-type">LoginOutput</span> =
+  | { <span class="sc-key">status</span>: <span class="sc-val">200</span>; token: <span class="sc-type">JWT</span>; expiresAt: <span class="sc-type">ISODate</span> }
+  | { <span class="sc-key">status</span>: <span class="sc-val">401</span>; code: <span class="sc-val">"AUTH_001"</span> }
+  | { <span class="sc-key">status</span>: <span class="sc-val">422</span>; code: <span class="sc-val">"AUTH_002"</span>; fields: <span class="sc-type">string[]</span> }
+  | { <span class="sc-key">status</span>: <span class="sc-val">429</span>; code: <span class="sc-val">"AUTH_003"</span>; retryAfter: <span class="sc-type">number</span> };
+
+<span class="sc-key">const</span> <span class="sc-type">LoginSpec</span> = {
+  <span class="sc-key">invariants</span>: [
+    <span class="sc-val">"password stored as bcrypt, cost >= 12"</span>,
+    <span class="sc-val">"rate limit: 5 failed attempts per minute"</span>,
+    <span class="sc-val">"token TTL <= 86400 seconds"</span>,
+    <span class="sc-val">"p95 response time < 400ms"</span>,
+  ],
+  <span class="sc-key">sideEffects</span>: [
+    <span class="sc-val">"emit: auth.login.success | auth.login.failed"</span>,
+    <span class="sc-val">"write: audit_log (every attempt)"</span>,
+  ],
+} <span class="sc-key">as const</span>;
+
+<span class="sc-comment">// Agent receives this contract → generates tests → implements</span>
+<span class="sc-key">export type</span> { <span class="sc-type">LoginInput</span>, <span class="sc-type">LoginOutput</span> };
+<span class="sc-key">export</span> { <span class="sc-type">LoginSpec</span> };</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Built with ❤️ to move developers from vibes to engineering.</p>
+  <p style="margin-top:0.5rem;">
+    <a href="https://github.com/pasindudt/spec-driven-development" target="_blank">View on GitHub</a>
+    &nbsp;·&nbsp;
+    Spec Driven Development — the foundation of agentic engineering.
+  </p>
+</footer>
+
+<script>
+  // ── TIMELINE ──
+  function toggleTimeline(el) {
+    const items = document.querySelectorAll('.timeline-item');
+    const isActive = el.classList.contains('active');
+    items.forEach(i => i.classList.remove('active'));
+    if (!isActive) el.classList.add('active');
+  }
+  // Open first by default
+  document.querySelector('.timeline-item').classList.add('active');
+
+  // ── PRINCIPLES ──
+  function togglePrinciple(el) {
+    const cards = document.querySelectorAll('.principle-card');
+    const isActive = el.classList.contains('active');
+    cards.forEach(c => c.classList.remove('active'));
+    if (!isActive) el.classList.add('active');
+  }
+
+  // ── SPEC TABS ──
+  function switchTab(tabEl, id) {
+    document.querySelectorAll('.spec-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.spec-pane').forEach(p => p.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // ── QUIZ ──
+  const questions = [
+    {
+      q: "You need to add a new endpoint to your API. What's your first move?",
+      options: [
+        "Open the editor and start coding — I'll figure it out as I go.",
+        "Ask an AI to generate the code based on a quick description.",
+        "Write a spec defining inputs, outputs, and invariants first.",
+        "Copy a similar endpoint and modify it."
+      ],
+      correct: 2,
+      feedback: {
+        correct: "✅ Exactly right! Writing the spec first is the cornerstone of SDD. It ensures your AI agent (and human teammates) have unambiguous context before a single line of code is written.",
+        wrong: "❌ This is vibe coding. Without a spec, your AI agent will fill in the blanks with assumptions — and those assumptions will become bugs."
+      }
+    },
+    {
+      q: "An AI coding agent produces a function that passes all your tests but behaves unexpectedly in production. What does SDD say went wrong?",
+      options: [
+        "The AI model wasn't good enough.",
+        "You didn't write enough tests.",
+        "The spec was incomplete — production scenarios weren't specified.",
+        "You should have reviewed the code more carefully."
+      ],
+      correct: 2,
+      feedback: {
+        correct: "✅ Correct! In SDD, if the system passes tests but fails in production, the spec was missing invariants that should have been specified. The spec is the source of truth — if it's incomplete, the implementation will be too.",
+        wrong: "❌ In SDD, the spec is the source of truth. If behavior was wrong, the spec didn't cover it. More tests without a better spec would just test the same incomplete behavior."
+      }
+    },
+    {
+      q: "A teammate asks: 'What does this service actually do?' In a spec-driven project, where do you point them?",
+      options: [
+        "The source code — it's the most accurate representation.",
+        "The README — it has a high-level summary.",
+        "The spec files — they are the authoritative description of behavior.",
+        "The tests — they show exactly what the system does."
+      ],
+      correct: 2,
+      feedback: {
+        correct: "✅ Right! Specs are the living documentation of intent. They're more precise than READMEs and more readable than code. In SDD, the spec answers 'what does this do' while code answers 'how does it do it.'",
+        wrong: "❌ Code, tests, and READMEs all drift from reality. Only a maintained spec is the authoritative, human-readable statement of what a system *must* do — regardless of what it currently does."
+      }
+    },
+    {
+      q: "You're handing off a feature to an AI coding agent. What context should you give it?",
+      options: [
+        "A description of the problem in plain English.",
+        "Examples of similar code in the codebase.",
+        "The complete spec: inputs, outputs, invariants, side effects, error cases.",
+        "A link to a Stack Overflow answer that's close to what you need."
+      ],
+      correct: 2,
+      feedback: {
+        correct: "✅ Perfect! A complete spec gives the agent everything it needs: what to build, how to validate it, what can't be violated, and what side effects to expect. No guessing, no hallucination of missing requirements.",
+        wrong: "❌ Vague context produces vague output. AI agents fill gaps with assumptions — and those assumptions become hidden bugs. A full spec eliminates ambiguity before the agent writes a single line."
+      }
+    },
+    {
+      q: "Product changes a requirement. What's the FIRST thing you update in a spec-driven workflow?",
+      options: [
+        "The code — get the new behavior working first, document later.",
+        "The tests — update tests to reflect the new expected behavior.",
+        "The spec — then regenerate/update tests, then update the implementation.",
+        "The README — make sure documentation is up to date."
+      ],
+      correct: 2,
+      feedback: {
+        correct: "✅ Exactly! Spec → Tests → Implementation. The spec is the source of truth, so every change starts there. This ensures the intent is explicit before any code changes — and agents can be re-run against the new spec without re-explaining everything.",
+        wrong: "❌ Updating code or tests first orphans the spec — the spec no longer reflects reality. In SDD, the spec leads. Everything else follows. This is what makes change predictable and agent-compatible."
+      }
+    }
+  ];
+
+  let current = 0;
+  let answers = [];
+  let answered = false;
+
+  function renderQuiz() {
+    const progress = document.getElementById('quiz-progress');
+    const body = document.getElementById('quiz-body');
+    answered = false;
+
+    // Progress bars
+    progress.innerHTML = questions.map((_, i) => {
+      let cls = 'quiz-progress-bar';
+      if (i < current) cls += ' done';
+      else if (i === current) cls += ' current';
+      return `<div class="${cls}"></div>`;
+    }).join('');
+
+    if (current >= questions.length) {
+      // Result screen
+      const score = answers.filter(Boolean).length;
+      const pct = Math.round((score / questions.length) * 100);
+      let msg, emoji;
+      if (pct === 100) { msg = "You're already thinking like an agentic engineer. Ship it."; emoji = "🚀"; }
+      else if (pct >= 60) { msg = "Good instincts. A few vibe-coding habits to shake. You're close."; emoji = "⚡"; }
+      else { msg = "You've got vibe-coding habits. SDD will change how you work — for the better."; emoji = "🎯"; }
+
+      body.innerHTML = `
+        <div class="quiz-result">
+          <div class="score-big">${score}/${questions.length}</div>
+          <p style="font-size:1.5rem">${emoji}</p>
+          <p>${msg}</p>
+          <button class="btn btn-primary" onclick="restartQuiz()">Retake Quiz</button>
+          <a href="#spec" class="btn btn-ghost" style="margin-left:0.75rem">See Spec Examples →</a>
+        </div>`;
+      return;
+    }
+
+    const q = questions[current];
+    const letters = ['A', 'B', 'C', 'D'];
+
+    body.innerHTML = `
+      <div class="quiz-q">Question ${current + 1} / ${questions.length}</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option" onclick="answerQuiz(this, ${i})" data-index="${i}">
+            <span class="quiz-option-letter">${letters[i]}</span>
+            ${opt}
+          </div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <div class="quiz-nav">
+        <div class="quiz-score-bar">
+          ${answers.map(a => `<div class="quiz-dot ${a ? 'correct' : 'wrong'}"></div>`).join('')}
+          ${Array(questions.length - answers.length).fill(0).map(() => `<div class="quiz-dot"></div>`).join('')}
+        </div>
+        <button class="btn btn-ghost" id="quiz-next" onclick="nextQuestion()" style="display:none">
+          ${current === questions.length - 1 ? 'See Results →' : 'Next →'}
+        </button>
+      </div>`;
+  }
+
+  function answerQuiz(el, idx) {
+    if (answered) return;
+    answered = true;
+    const q = questions[current];
+    const opts = document.querySelectorAll('.quiz-option');
+    const isCorrect = idx === q.correct;
+    answers.push(isCorrect);
+
+    opts.forEach((opt, i) => {
+      if (i === q.correct) opt.classList.add('show-correct');
+    });
+    if (!isCorrect) el.classList.add('selected-wrong');
+    else el.classList.add('selected-correct');
+
+    const fb = document.getElementById('quiz-feedback');
+    fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+    fb.textContent = isCorrect ? q.feedback.correct : q.feedback.wrong;
+    document.getElementById('quiz-next').style.display = 'inline-flex';
+  }
+
+  function nextQuestion() {
+    current++;
+    renderQuiz();
+  }
+
+  function restartQuiz() {
+    current = 0;
+    answers = [];
+    renderQuiz();
+  }
+
+  renderQuiz();
+</script>
+
+</body>
+</html>
