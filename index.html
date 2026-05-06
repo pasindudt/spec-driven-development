@@ -676,8 +676,8 @@
   <div class="hero-badge">A guide for developers</div>
   <h1>Stop vibe coding.<br><span class="gradient">Start engineering.</span></h1>
   <p class="hero-sub">
-    Spec Driven Development makes AI agents reliable. Here's what it means,
-    how it works, and how real teams practice it.
+    Spec Driven Development makes AI agents more predictable and easier to verify. Here's what it means,
+    how it works, and how to start practicing it.
   </p>
   <div class="hero-cta">
     <a href="#why" class="btn btn-primary">See why it matters ↓</a>
@@ -692,13 +692,13 @@
     <div class="section-label">The Problem</div>
     <h2>Vibe coding vs. Agentic Engineering</h2>
     <p class="section-intro">
-      Vibe coding gets you moving fast. It gets you stuck faster.
+      Vibe coding gets you to a prototype quickly. Without specs, that speed compounds into technical debt as systems grow.
       Here's what separates intuition-driven hacks from production-grade agentic systems.
     </p>
     <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px;">
       <div style="font-size: 12px; font-weight: 600; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Origins &amp; Attribution</div>
       <p style="font-size: 14px; line-height: 1.6; color: var(--muted); margin: 0;">
-        <strong style="color: var(--text);">"Vibe coding"</strong> was coined by Andrej Karpathy on <a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: var(--accent2); text-decoration: none;">2 February 2025</a> to describe building software without reading the generated code.
+        <strong style="color: var(--text);">"Vibe coding"</strong> was coined by Andrej Karpathy on <a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: var(--accent2); text-decoration: none;">2 February 2025</a> to describe fully delegating coding to AI — accepting the output without reading, reviewing, or reasoning about the generated code.
         <strong style="color: var(--text);">"Spec-Driven Development"</strong> as an AI-era discipline is most associated with
         <a href="https://www.youtube.com/watch?v=BIvILtt164I" target="_blank" style="color: var(--accent2); text-decoration: none;">Sean Grove's <em>The New Code</em> talk</a> (AI Engineer World's Fair 2025),
         <a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" style="color: var(--accent2); text-decoration: none;">GitHub's Spec Kit launch</a> (August 2025), and
@@ -767,7 +767,7 @@
       Click each step to expand.
     </p>
     <p style="font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 800px; margin: 0 0 24px 0; font-style: italic;">
-      <strong style="color: var(--text);">Lineage:</strong> This loop has deep roots. <a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2); text-decoration: none;">Design by Contract</a> (Meyer, 1988), <a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: var(--accent2); text-decoration: none;">Behavior-Driven Development</a> (North, 2006), <a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: var(--accent2); text-decoration: none;">Specification by Example</a> (Adzic, 2011), and <a href="https://en.wikipedia.org/wiki/QuickCheck" target="_blank" style="color: var(--accent2); text-decoration: none;">property-based testing</a> all argued — long before LLMs — that a precise description of behavior should sit upstream of both code and tests. SDD applies that idea to AI agents.
+      <strong style="color: var(--text);">Lineage:</strong> This loop has deep roots. <a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2); text-decoration: none;">Design by Contract</a> (Meyer, 1988–1992), <a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: var(--accent2); text-decoration: none;">Behavior-Driven Development</a> (North, 2006), <a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: var(--accent2); text-decoration: none;">Specification by Example</a> (Adzic, 2011), and <a href="https://en.wikipedia.org/wiki/QuickCheck" target="_blank" style="color: var(--accent2); text-decoration: none;">property-based testing</a> all argued — long before LLMs — that a precise description of behavior should sit upstream of both code and tests. SDD applies that idea to AI agents.
     </p>
     <div class="timeline" id="timeline">
 
@@ -936,7 +936,7 @@
         <h3>Continuous Alignment</h3>
         <p>Specs stay alive. They are versioned and reviewed like production code.</p>
         <div class="principle-expand">
-          A spec that falls out of date is worse than no spec — it actively misleads.
+          An outdated spec is a liability if treated as truth — it misleads anyone who reads it.
           <strong>Version your specs</strong>, review spec changes as seriously as code changes,
           and automate spec validation in CI.
           The spec's health is the system's health.
@@ -990,8 +990,8 @@
 
 <span class="sc-key">invariants</span>:
   - <span class="sc-val">password MUST NOT be stored in plaintext</span>
-  - <span class="sc-val">failed attempts MUST be rate-limited after 5 tries</span>
-  - <span class="sc-val">token expiry MUST be ≤ 24h</span>
+  - <span class="sc-val">failed attempts MUST be rate-limited after 5 tries per minute</span>
+  - <span class="sc-val">token expiry MUST be ≤ 1h</span>  <span class="sc-comment"># OWASP recommends ≤ 15–60 min for access tokens</span>
   - <span class="sc-val">response time MUST be &lt; 400ms at p95</span>
 
 <span class="sc-key">side_effects</span>:
@@ -1027,7 +1027,7 @@ a short-lived JWT. All auth events are audited.
 <span class="sc-heading">## Invariants (MUST hold at all times)</span>
 - [ ] Passwords stored as bcrypt hash (cost ≥ 12)
 - [ ] Failed attempts rate-limited after 5 tries / minute
-- [ ] Token TTL ≤ 24 hours
+- [ ] Token TTL ≤ 1 hour (OWASP recommends ≤ 15–60 min for access tokens)
 - [ ] p95 response time &lt; 400ms
 
 <span class="sc-heading">## Side Effects</span>
@@ -1054,7 +1054,7 @@ a short-lived JWT. All auth events are audited.
   <span class="sc-key">invariants</span>: [
     <span class="sc-val">"password stored as bcrypt, cost &gt;= 12"</span>,
     <span class="sc-val">"rate limit: 5 failed attempts per minute"</span>,
-    <span class="sc-val">"token TTL &lt;= 86400 seconds"</span>,
+    <span class="sc-val">"token TTL &lt;= 3600 seconds"</span>, <span class="sc-comment">// OWASP recommends ≤ 15–60 min; adjust per policy</span>
     <span class="sc-val">"p95 response time &lt; 400ms"</span>,
   ],
   <span class="sc-key">sideEffects</span>: [
@@ -1112,10 +1112,10 @@ a short-lived JWT. All auth events are audited.
             Before you open a spec file, resolve every ambiguity: Who triggers the reset — the user, an admin, or both? What is the token TTL? If a user requests two resets in a row, does the first token expire immediately? What happens when an expired token is used? Each unanswered question is a future production bug.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># With Pocock's /grill skill (Claude Code):</span>
+<span class="wc-comment"># With Pocock's /grill-with-docs skill (Claude Code):</span>
 <span class="wc-label">You:</span>  <span class="wc-str">"Add a password reset flow to the auth service"</span>
-<span class="wc-label">Agent:</span> Asks ~10 clarifying questions — token TTL? email vs. SMS? concurrent reset handling?
-        You answer each before any spec is written.
+<span class="wc-label">Agent:</span> Challenges assumptions, surfaces unanswered questions — token TTL? email vs. SMS?
+        concurrent reset handling? — and documents decisions in ADRs before any spec is written.
 
 <span class="wc-comment"># With BMAD Analyst agent:</span>
 <span class="wc-label">You:</span>  Describe the feature in plain text
@@ -1157,7 +1157,7 @@ a short-lived JWT. All auth events are audited.
 <span class="wc-str">"Read specs/password-reset.yaml. Write a test suite that covers every
  invariant and every error case. Tests should fail until the endpoint exists."</span>
 
-<span class="wc-comment"># With Pocock's /tdd skill:</span>
+<span class="wc-comment"># With Pocock's /tdd skill (Claude Code):</span>
   Agent writes failing tests first. It will not write implementation code until the tests exist.
 
 <span class="wc-comment"># With BMAD QA agent:</span>
@@ -1240,9 +1240,9 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A set of slash commands you add to Claude Code that enforce spec-first discipline at each stage. Composable — use only what your team needs.</div>
         <ul class="eco-bullets">
-          <li><strong>/grill:</strong> paste a requirement → agent asks hard questions you haven't answered yet</li>
+          <li><strong>/grill-with-docs:</strong> paste a requirement → agent challenges assumptions and documents decisions in ADRs</li>
           <li><strong>/tdd:</strong> agent writes failing tests before implementation; refuses to code otherwise</li>
-          <li><strong>/diagnose:</strong> structured debugging that traces failures back to the violated spec invariant</li>
+          <li><strong>/diagnose:</strong> structured debugging loop that traces failures back to root cause</li>
           <li>Best for developers who want discipline without adopting a full framework</li>
         </ul>
         <div class="eco-links">
@@ -1267,7 +1267,7 @@ a short-lived JWT. All auth events are audited.
         </ul>
         <div class="eco-links">
           <a href="https://github.com/github/spec-kit" target="_blank">Repo</a>
-          <a href="https://github.com/dceoy/speckit-agent-skills" target="_blank">Agent skills extension</a>
+          <a href="https://github.com/dceoy/speckit-agent-skills" target="_blank">Agent skills extension (community)</a>
         </div>
       </div>
 
@@ -1278,7 +1278,7 @@ a short-lived JWT. All auth events are audited.
             <span class="eco-tag">IDE</span><span class="eco-tag">spec-first</span><span class="eco-tag">commercial</span>
           </div>
         </div>
-        <div class="eco-desc">A VS Code-based IDE where specs are first-class project artifacts. Agents cannot start implementation until you review and approve the spec.</div>
+        <div class="eco-desc">A VS Code-based IDE where specs are first-class project artifacts. Agents cannot start implementation until you review and approve the spec. <em style="color: var(--faint); font-size: 0.82rem;">Review Amazon's data handling policy before using with proprietary code.</em></div>
         <ul class="eco-bullets">
           <li><strong>Stage 1–2:</strong> describe in plain text → Kiro generates requirements + design doc for your review</li>
           <li><strong>Stage 3–4:</strong> approve the spec → agents implement against the task list</li>
@@ -1295,15 +1295,15 @@ a short-lived JWT. All auth events are audited.
         <div class="eco-top">
           <div class="eco-title">OpenSpec</div>
           <div class="eco-tags">
-            <span class="eco-tag">brownfield</span><span class="eco-tag">incremental</span><span class="eco-tag">open-source</span>
+            <span class="eco-tag">brownfield</span><span class="eco-tag">incremental</span><span class="eco-tag">open-source</span><span class="eco-tag">active</span>
           </div>
         </div>
-        <div class="eco-desc">A spec framework built for existing codebases. It extracts the implicit behavior already in your code as a spec you then verify and maintain.</div>
+        <div class="eco-desc">A lightweight spec framework designed to work with existing codebases. New changes are described as delta specs — what's changing, not a full restatement of the whole system.</div>
         <ul class="eco-bullets">
-          <li>Run guided commands on existing files → agent extracts implicit behavior as a draft spec</li>
-          <li>Review and correct the draft — this becomes the baseline spec for that module</li>
-          <li>New features extend the spec; old code gains coverage incrementally</li>
-          <li>Best for teams adopting SDD on an existing system without rewriting it</li>
+          <li>Add a spec layer on top of an existing project without rewriting it from scratch</li>
+          <li>Delta specs describe only what is changing for a given feature; the rest of the codebase is treated as stable context</li>
+          <li>Supports 25+ agent tools; available as an npm package</li>
+          <li>Best for teams adopting SDD incrementally on an existing system</li>
         </ul>
         <div class="eco-links">
           <a href="https://github.com/Fission-AI/OpenSpec" target="_blank">Repo</a>
@@ -1375,7 +1375,7 @@ a short-lived JWT. All auth events are audited.
         <h3>Spec drift</h3>
         <p>Without CI gates, specs rot like documentation.</p>
         <div class="principle-expand">
-          A spec that's out of date is actively misleading. SDD requires sustained discipline:
+          An outdated spec, if treated as truth, actively misleads. SDD requires sustained discipline:
           <strong>version specs, enforce traceability in CI, make spec changes visible in code review</strong>.
           Skipping this turns your spec directory into a graveyard of stale promises.
         </div>
@@ -1452,7 +1452,7 @@ a short-lived JWT. All auth events are audited.
       </ul>
       <p style="margin: 12px 0 8px 0;"><strong style="color: var(--text);">Intellectual Lineage:</strong></p>
       <ul style="margin: 0; padding-left: 20px; list-style: none;">
-        <li><a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2);">Design by Contract</a> (Meyer, 1988)</li>
+        <li><a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2);">Design by Contract</a> (Meyer, 1988–1992)</li>
         <li><a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: var(--accent2);">Behavior-Driven Development</a> (North, 2006)</li>
         <li><a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: var(--accent2);">Specification by Example</a> (Adzic, 2011)</li>
         <li><a href="https://dl.acm.org/doi/10.1145/351240.351266" target="_blank" style="color: var(--accent2);">QuickCheck</a> (Claessen &amp; Hughes, 2000)</li>
@@ -1521,7 +1521,7 @@ a short-lived JWT. All auth events are audited.
       correct: 2,
       feedback: {
         correct: "✅ Correct! In SDD, if the system passes tests but fails in production, the spec was missing invariants that should have been specified. The spec is the source of truth — if it's incomplete, the implementation will be too.",
-        wrong: "❌ In SDD, the spec is the source of truth. If behavior was wrong, the spec didn't cover it. More tests without a better spec would just test the same incomplete behavior."
+        wrong: "❌ In SDD, the root cause traces to the spec — but more tests covering production-realistic scenarios would also help surface similar gaps. The key distinction: tests derived from code only verify what the code already does; a better spec ensures the right behavior is defined before any test is written."
       }
     },
     {
