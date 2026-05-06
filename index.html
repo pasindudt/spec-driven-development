@@ -1563,13 +1563,16 @@ a short-lived JWT. All auth events are audited.
       options: [
         "Open the editor and start coding — I'll figure it out as I go.",
         "Ask an AI to generate the code based on a quick description.",
-        "Write a spec defining inputs, outputs, and invariants first.",
-        "Copy a similar endpoint and modify it."
+        "Write a spec defining inputs, outputs, and invariants first."
       ],
       correct: 2,
       feedback: {
         correct: "✅ Exactly right! Writing the spec first is the cornerstone of SDD. It ensures your AI agent (and human teammates) have unambiguous context before a single line of code is written.",
-        wrong: "❌ This is vibe coding. Without a spec, your AI agent will fill in the blanks with assumptions — and those assumptions will become bugs."
+        wrong: [
+          "❌ This is vibe coding. Starting without a spec means your intent lives only in your head — any agent you bring in later will fill gaps with assumptions that become bugs.",
+          "❌ A quick description is not a spec. Without defined inputs, outputs, and invariants, the agent is guessing — and those guesses become hidden bugs.",
+          null
+        ]
       }
     },
     {
@@ -1577,13 +1580,16 @@ a short-lived JWT. All auth events are audited.
       options: [
         "The AI model wasn't good enough.",
         "You didn't write enough tests.",
-        "The spec was incomplete — production scenarios weren't specified.",
-        "You should have reviewed the code more carefully."
+        "The spec was incomplete — production scenarios weren't specified."
       ],
       correct: 2,
       feedback: {
         correct: "✅ Correct! In SDD, if the system passes tests but fails in production, the spec was missing invariants that should have been specified. The spec is the source of truth — if it's incomplete, the implementation will be too.",
-        wrong: "❌ In SDD, the root cause traces to the spec — but more tests covering production-realistic scenarios would also help surface similar gaps. The key distinction: tests derived from code only verify what the code already does; a better spec ensures the right behavior is defined before any test is written."
+        wrong: [
+          "❌ The model did exactly what it was asked. The problem was the spec didn't cover production scenarios — a better model would have made the same mistake.",
+          "❌ Tests can only verify what the spec defines. If the spec was missing production invariants, more tests would only confirm the same incomplete behavior.",
+          null
+        ]
       }
     },
     {
@@ -1597,7 +1603,12 @@ a short-lived JWT. All auth events are audited.
       correct: 2,
       feedback: {
         correct: "✅ Right! Specs are the living documentation of intent. They're more precise than READMEs and more readable than code. In SDD, the spec answers 'what does this do' while code answers 'how does it do it.'",
-        wrong: "❌ Code, tests, and READMEs all drift from reality. Only a maintained spec is the authoritative, human-readable statement of what a system *must* do — regardless of what it currently does."
+        wrong: [
+          "❌ Code describes how, not what or why. It drifts and accumulates workarounds. A spec states what the system must do, independent of how it's currently implemented.",
+          "❌ READMEs are summaries, not authoritative specs. They're typically outdated and lack the precision needed to define behavior or guide an AI agent.",
+          null,
+          "❌ Tests describe what was verified at a point in time, not what the system should do. Only the spec is the authoritative statement of intent."
+        ]
       }
     },
     {
@@ -1605,13 +1616,16 @@ a short-lived JWT. All auth events are audited.
       options: [
         "A description of the problem in plain English.",
         "Examples of similar code in the codebase.",
-        "The complete spec: inputs, outputs, invariants, side effects, error cases.",
-        "A link to a Stack Overflow answer that's close to what you need."
+        "The complete spec: inputs, outputs, invariants, side effects, error cases."
       ],
       correct: 2,
       feedback: {
         correct: "✅ Perfect! A complete spec gives the agent everything it needs: what to build, how to validate it, what can't be violated, and what side effects to expect. No guessing, no hallucination of missing requirements.",
-        wrong: "❌ Vague context produces vague output. AI agents fill gaps with assumptions — and those assumptions become hidden bugs. A full spec eliminates ambiguity before the agent writes a single line."
+        wrong: [
+          "❌ Plain English is ambiguous. AI agents fill gaps with plausible-sounding assumptions — and those assumptions become hidden bugs. A formal spec eliminates ambiguity.",
+          "❌ Code examples tell the agent how to style the output, not what behavior is required. It will copy patterns without understanding your intent.",
+          null
+        ]
       }
     },
     {
@@ -1619,13 +1633,16 @@ a short-lived JWT. All auth events are audited.
       options: [
         "The code — get the new behavior working first, document later.",
         "The tests — update tests to reflect the new expected behavior.",
-        "The spec — then update tests, then update the implementation.",
-        "The README — make sure documentation is up to date."
+        "The spec — then update tests, then update the implementation."
       ],
       correct: 2,
       feedback: {
         correct: "✅ Exactly! Spec → Tests → Implementation. The spec is the source of truth, so every change starts there. This ensures the intent is explicit before any code changes — and agents can be re-run against the new spec without re-explaining everything.",
-        wrong: "❌ Updating code or tests first orphans the spec — the spec no longer reflects reality. In SDD, the spec leads. Everything else follows. This is what makes change predictable and agent-compatible."
+        wrong: [
+          "❌ Code-first means intent is trapped in an implementation. 'Document later' never happens — the spec becomes a lie, and any agent re-run will reproduce the old behavior.",
+          "❌ Tests derived from a stale spec just formalize the wrong behavior. Without updating the spec first, you lose the authoritative record of what the system should do.",
+          null
+        ]
       }
     }
   ];
@@ -1708,7 +1725,7 @@ a short-lived JWT. All auth events are audited.
 
     const fb = document.getElementById('quiz-feedback');
     fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
-    fb.textContent = isCorrect ? q.feedback.correct : q.feedback.wrong;
+    fb.textContent = isCorrect ? q.feedback.correct : q.feedback.wrong[idx];
     document.getElementById('quiz-next').style.display = 'inline-flex';
   }
 
