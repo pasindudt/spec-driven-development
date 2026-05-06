@@ -230,11 +230,31 @@
       font-size: 0.78rem;
       line-height: 1.7;
       overflow-x: auto;
+      white-space: pre-wrap;
     }
     .code-block .comment { color: var(--faint); }
     .code-block .keyword { color: var(--accent2); }
     .code-block .string { color: var(--success); }
     .code-block .fn { color: var(--accent3); }
+    .code-block-bad { border-left: 3px solid rgba(248,113,113,0.45); }
+    .code-block-good { border-left: 3px solid rgba(52,211,153,0.4); }
+    .block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--faint);
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .block-arrow {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin: 0.6rem 0;
+      font-family: var(--mono);
+      opacity: 0.65;
+    }
 
     /* ── INTERACTIVE TIMELINE ── */
     .timeline-section { background: var(--bg); }
@@ -588,6 +608,7 @@
       line-height: 1.75;
       color: var(--muted);
       overflow-x: auto;
+      white-space: pre-wrap;
     }
     .walk-code .wc-label { color: var(--accent2); }
     .walk-code .wc-str { color: var(--success); }
@@ -712,20 +733,25 @@
           <span class="compare-title">🎲 Feels productive</span>
         </div>
         <ul class="compare-items">
-          <li><span class="icon">🎯</span> "It works on my machine" is the only spec</li>
+          <li><span class="icon">🎯</span> No spec — behavior is defined by whatever the code produces</li>
           <li><span class="icon">🌀</span> Requirements live inside one developer's head</li>
           <li><span class="icon">💥</span> AI agents hallucinate missing context and fill gaps wrong</li>
           <li><span class="icon">🔁</span> Every change risks breaking unknown side effects</li>
           <li><span class="icon">🤐</span> Impossible to hand off or scale to a team</li>
           <li><span class="icon">🕳️</span> No contract between intent, implementation, and test</li>
         </ul>
+        <div class="block-label">Prompt to AI</div>
         <div class="code-block">
-<span class="comment">// Vibe-coded function</span>
-<span class="keyword">function</span> <span class="fn">processOrder</span>(data) {
-  <span class="comment">// TODO: validate maybe?</span>
-  <span class="keyword">const</span> result = doStuff(data);
-  <span class="comment">// seems to work ¯\_(ツ)_/¯</span>
-  <span class="keyword">return</span> result;
+<span class="string">"add a withdrawFunds function that moves
+money out of a user's account."</span></div>
+        <div class="block-arrow">↓ AI output</div>
+        <div class="code-block code-block-bad">
+<span class="comment">// AI filled every gap by guessing</span>
+<span class="keyword">async function</span> <span class="fn">withdrawFunds</span>(userId, amount) {
+  <span class="keyword">const</span> account = <span class="keyword">await</span> db.getAccount(userId);
+  account.balance -= amount; <span class="comment">// no negative-balance check</span>
+  <span class="keyword">await</span> db.save(account);    <span class="comment">// no transaction — race condition</span>
+  <span class="keyword">return</span> { ok: <span class="keyword">true</span> };       <span class="comment">// no error cases</span>
 }</div>
       </div>
       <div class="compare-col">
@@ -736,22 +762,39 @@
         <ul class="compare-items">
           <li><span class="icon">📄</span> Behavior is written as a machine-readable spec first</li>
           <li><span class="icon">🤖</span> Agents receive unambiguous context — no guessing</li>
-          <li><span class="icon">✅</span> Tests are derived directly from the spec</li>
           <li><span class="icon">🔗</span> Every component has a contract: inputs, outputs, invariants</li>
-          <li><span class="icon">📦</span> Reproducible across any agent, team, or time</li>
           <li><span class="icon">🧭</span> Change is predictable — the spec is the ground truth</li>
+          <li><span class="icon">📦</span> Reproducible across any agent, team, or time</li>
+          <li><span class="icon">✅</span> Tests are derived directly from the spec</li>
         </ul>
+        <div class="block-label">Spec (written first)</div>
         <div class="code-block">
-<span class="comment"># spec: order-processing.yaml</span>
-<span class="keyword">function</span>: processOrder
+<span class="comment"># spec: withdraw-funds.yaml</span>
+<span class="keyword">function</span>: withdrawFunds
 <span class="keyword">inputs</span>:
-  - name: <span class="string">orderId</span>    type: <span class="fn">UUID</span>
-  - name: <span class="string">items</span>      type: <span class="fn">Item[]</span>  min: 1
+  - name: <span class="string">accountId</span>  type: <span class="fn">UUID</span>
+  - name: <span class="string">amount</span>     type: <span class="fn">Money</span>  min: 0.01
 <span class="keyword">invariants</span>:
-  - total &gt; 0
-  - all items in stock
+  - account.balance &gt;= amount
+  - account.frozen === false
+  - operation is atomic
 <span class="keyword">outputs</span>:
-  - <span class="string">confirmation</span>: OrderConfirmation</div>
+  - <span class="string">receipt</span>: TransactionReceipt
+<span class="keyword">errors</span>:
+  - InsufficientFunds | AccountFrozen</div>
+        <div class="block-arrow">↓ AI output</div>
+        <div class="code-block code-block-good">
+<span class="comment">// Generated from spec — no guessing</span>
+<span class="keyword">async function</span> <span class="fn">withdrawFunds</span>({ accountId, amount }) {
+  assert(amount &gt;= 0.01);
+  <span class="keyword">return await</span> db.transaction(<span class="keyword">async</span> (tx) =&gt; {
+    <span class="keyword">const</span> account = <span class="keyword">await</span> tx.lockAccount(accountId);
+    <span class="keyword">if</span> (account.frozen) <span class="keyword">throw new</span> AccountFrozen();
+    <span class="keyword">if</span> (account.balance &lt; amount) <span class="keyword">throw new</span> InsufficientFunds();
+    account.balance -= amount;
+    <span class="keyword">return await</span> tx.saveReceipt(account, amount);
+  }); <span class="comment">// type: TransactionReceipt ✓</span>
+}</div>
       </div>
     </div>
   </div>
@@ -763,7 +806,7 @@
     <div class="section-label">The Process</div>
     <h2>How Spec Driven Development works</h2>
     <p class="section-intro">
-      Five steps that turn ambiguous intent into deterministic, agent-ready systems.
+      Six steps that turn ambiguous intent into deterministic, agent-ready systems.
       Click each step to expand.
     </p>
     <p style="font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 800px; margin: 0 0 24px 0; font-style: italic;">
@@ -775,7 +818,25 @@
         <div class="timeline-dot">1</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 01</div>
-          <h3>Write the Spec First</h3>
+          <h3>Clarify Before You Specify</h3>
+          <p>Resolve every ambiguity before writing a single line of spec.</p>
+          <div class="timeline-detail">
+            <div class="timeline-detail-inner">
+              Most spec bugs are unanswered clarification questions in disguise.
+              Before opening a spec file, resolve: Who triggers this? What is the token TTL?
+              What happens on concurrent requests? What does success look like for the user?
+              Each unresolved question becomes a future production bug.
+              <strong>Document decisions as ADRs</strong> — so the spec records not just what was decided, but why.
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button class="timeline-item" onclick="toggleTimeline(this)">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-content">
+          <div class="timeline-step">Step 02</div>
+          <h3>Write the Spec</h3>
           <p>Before any code, before any prompt — write what the system <em>must</em> do.</p>
           <div class="timeline-detail">
             <div class="timeline-detail-inner">
@@ -790,9 +851,9 @@
       </button>
 
       <button class="timeline-item" onclick="toggleTimeline(this)">
-        <div class="timeline-dot">2</div>
+        <div class="timeline-dot">3</div>
         <div class="timeline-content">
-          <div class="timeline-step">Step 02</div>
+          <div class="timeline-step">Step 03</div>
           <h3>Generate Tests from the Spec</h3>
           <p>Tests aren't written after the fact — they're derived directly from spec invariants.</p>
           <div class="timeline-detail">
@@ -807,9 +868,9 @@
       </button>
 
       <button class="timeline-item" onclick="toggleTimeline(this)">
-        <div class="timeline-dot">3</div>
+        <div class="timeline-dot">4</div>
         <div class="timeline-content">
-          <div class="timeline-step">Step 03</div>
+          <div class="timeline-step">Step 04</div>
           <h3>Implement Against the Spec</h3>
           <p>Pass the spec — not just a vague description — to your AI agent or developer.</p>
           <div class="timeline-detail">
@@ -824,9 +885,9 @@
       </button>
 
       <button class="timeline-item" onclick="toggleTimeline(this)">
-        <div class="timeline-dot">4</div>
+        <div class="timeline-dot">5</div>
         <div class="timeline-content">
-          <div class="timeline-step">Step 04</div>
+          <div class="timeline-step">Step 05</div>
           <h3>Validate Against Invariants</h3>
           <p>Run the spec-derived tests. Any failure points back to a specific spec invariant.</p>
           <div class="timeline-detail">
@@ -841,9 +902,9 @@
       </button>
 
       <button class="timeline-item" onclick="toggleTimeline(this)">
-        <div class="timeline-dot">5</div>
+        <div class="timeline-dot">6</div>
         <div class="timeline-content">
-          <div class="timeline-step">Step 05</div>
+          <div class="timeline-step">Step 06</div>
           <h3>Evolve Specs, Not Just Code</h3>
           <p>When requirements change, update the spec first. Everything else follows.</p>
           <div class="timeline-detail">
@@ -1131,9 +1192,10 @@ a short-lived JWT. All auth events are audited.
             Write inputs, outputs, error codes, invariants, and side effects. This is the contract. Every downstream step — tests, implementation, code review — is measured against it. If it's not in the spec, you cannot assume it's implemented correctly.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># GitHub Spec Kit CLI:</span>
-<span class="wc-cmd">$ speckit specify password-reset</span>
-  → generates <span class="wc-str">specs/password-reset.md</span> with a structured template to fill in
+<span class="wc-comment"># GitHub Spec Kit (slash command inside your agent):</span>
+<span class="wc-cmd">/speckit.specify</span>  describe the feature in plain text
+  → agent creates the feature directory and <span class="wc-str">spec.md</span> with a structured template to fill in
+<span class="wc-comment">  # one-time project setup: uvx --from git+https://github.com/github/spec-kit.git specify init &lt;PROJECT&gt;</span>
 
 <span class="wc-comment"># Kiro IDE:</span>
   Describe the feature in plain text → Kiro drafts requirements + design doc
@@ -1178,9 +1240,9 @@ a short-lived JWT. All auth events are audited.
  Spec:  specs/password-reset.yaml
  Tests: tests/password-reset.test.ts — all must pass."</span>
 
-<span class="wc-comment"># GitHub Spec Kit:</span>
-<span class="wc-cmd">$ speckit plan</span>    → breaks the spec into an ordered task list
-<span class="wc-cmd">$ speckit tasks</span>   → outputs individual task files; run each through your agent
+<span class="wc-comment"># GitHub Spec Kit (slash commands inside your agent):</span>
+<span class="wc-cmd">/speckit.plan</span>     → generates plan.md and interface contracts
+<span class="wc-cmd">/speckit.tasks</span>    → parses design docs into a dependency-ordered tasks.md; run each task through your agent
 
 <span class="wc-comment"># Kiro IDE:</span>
   Click "Implement" → agents work through the task list, checking each task against the spec</div>
@@ -1254,16 +1316,16 @@ a short-lived JWT. All auth events are audited.
         <div class="eco-top">
           <div class="eco-title">GitHub Spec Kit</div>
           <div class="eco-tags">
-            <span class="eco-tag">CLI</span><span class="eco-tag">pipeline</span><span class="eco-tag">open-source</span>
+            <span class="eco-tag">slash commands</span><span class="eco-tag">pipeline</span><span class="eco-tag">open-source</span>
           </div>
         </div>
-        <div class="eco-desc">A CLI that enforces the spec-first pipeline with concrete commands at each stage, designed to plug into any CI system.</div>
+        <div class="eco-desc">A toolkit that installs agent slash commands into your project, enforcing the spec-first pipeline at each stage. Works with 30+ AI coding agents.</div>
         <ul class="eco-bullets">
-          <li><strong>constitution:</strong> one-time project setup — defines constraints and conventions</li>
-          <li><strong>specify &lt;feature&gt;:</strong> generates a spec template for a feature to fill in</li>
-          <li><strong>plan:</strong> breaks the approved spec into an ordered task list</li>
-          <li><strong>tasks:</strong> outputs individual task files; pass each to your coding agent</li>
-          <li>Best for teams who want a CLI-driven, CI-friendly spec pipeline</li>
+          <li><strong>/speckit.specify:</strong> creates the feature directory and spec.md template to fill in</li>
+          <li><strong>/speckit.plan:</strong> generates plan.md, data-model.md, and interface contracts from the spec</li>
+          <li><strong>/speckit.tasks:</strong> parses design docs into a dependency-ordered tasks.md; pass each task to your agent</li>
+          <li><strong>/speckit.constitution:</strong> one-time project setup — establishes non-negotiable constraints and conventions</li>
+          <li>Best for teams who want a structured, agent-native spec pipeline with CI integration</li>
         </ul>
         <div class="eco-links">
           <a href="https://github.com/github/spec-kit" target="_blank">Repo</a>
@@ -1302,7 +1364,7 @@ a short-lived JWT. All auth events are audited.
         <ul class="eco-bullets">
           <li>Add a spec layer on top of an existing project without rewriting it from scratch</li>
           <li>Delta specs describe only what is changing for a given feature; the rest of the codebase is treated as stable context</li>
-          <li>Supports 25+ agent tools; available as an npm package</li>
+          <li>Supports 21 agent tools; available as an npm package</li>
           <li>Best for teams adopting SDD incrementally on an existing system</li>
         </ul>
         <div class="eco-links">
