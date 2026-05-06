@@ -530,7 +530,7 @@
     }
     .eco-desc { color: var(--muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
     .eco-bullets { margin: 0.75rem 0 0; padding-left: 1.1rem; color: var(--text); }
-    .eco-bullets li { margin: 0.28rem 0; color: var(--muted); }
+    .eco-bullets li { margin: 0.28rem 0; color: var(--muted); font-size: 0.88rem; line-height: 1.55; }
     .eco-links { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.95rem; }
     .eco-links a { color: var(--accent2); text-decoration: none; font-size: 0.85rem; }
     .eco-links a:hover { text-decoration: underline; }
@@ -546,6 +546,53 @@
       color: var(--text);
     }
     .eco-callout p { color: var(--muted); margin-top: 0.35rem; }
+
+    /* Walkthrough steps */
+    .walkthrough {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .walk-step {
+      display: flex;
+      gap: 1.25rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .walk-step:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .walk-num {
+      background: rgba(124,106,247,0.15);
+      border: 1px solid rgba(124,106,247,0.3);
+      color: var(--accent2);
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.78rem; font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .walk-body { flex: 1; }
+    .walk-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .walk-desc { color: var(--muted); font-size: 0.87rem; line-height: 1.6; margin-bottom: 0.75rem; }
+    .walk-code {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: var(--muted);
+      overflow-x: auto;
+    }
+    .walk-code .wc-label { color: var(--accent2); }
+    .walk-code .wc-str { color: var(--success); }
+    .walk-code .wc-cmd { color: var(--accent3); }
+    .walk-code .wc-comment { color: var(--faint); }
 
     @media (max-width: 900px) {
       .eco-card { grid-column: span 12; }
@@ -584,6 +631,26 @@
       .nav-links { display: none; }
     }
 
+    /* Reset button defaults for card/timeline/quiz interactive elements */
+    button.timeline-item,
+    button.principle-card,
+    button.quiz-option {
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      width: 100%;
+      display: block;
+      background: none;
+      border: none;
+    }
+    button.timeline-item {
+      display: flex;
+    }
+    button.quiz-option {
+      display: flex;
+      align-items: center;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
@@ -598,9 +665,9 @@
     <li><a href="#why">Why</a></li>
     <li><a href="#how">How It Works</a></li>
     <li><a href="#principles">Principles</a></li>
-    <li><a href="#quiz">Quiz</a></li>
-    <li><a href="#ecosystem">Ecosystem</a></li>
     <li><a href="#spec">Spec Examples</a></li>
+    <li><a href="#ecosystem">Ecosystem</a></li>
+    <li><a href="#quiz">Quiz</a></li>
   </ul>
 </nav>
 
@@ -609,8 +676,8 @@
   <div class="hero-badge">A guide for developers</div>
   <h1>Stop vibe coding.<br><span class="gradient">Start engineering.</span></h1>
   <p class="hero-sub">
-    Discover why Spec Driven Development is the foundation of reliable agentic engineering —
-    and how to make the shift from intuition-led hacking to precise, reproducible systems.
+    Spec Driven Development makes AI agents reliable. Here's what it means,
+    how it works, and how real teams practice it.
   </p>
   <div class="hero-cta">
     <a href="#why" class="btn btn-primary">See why it matters ↓</a>
@@ -625,17 +692,17 @@
     <div class="section-label">The Problem</div>
     <h2>Vibe coding vs. Agentic Engineering</h2>
     <p class="section-intro">
-      Vibe coding gets you started fast. It gets you stuck faster.
+      Vibe coding gets you moving fast. It gets you stuck faster.
       Here's what separates intuition-driven hacks from production-grade agentic systems.
     </p>
-    <div class="origins-callout" style="background: linear-gradient(135deg, #f5f3ff 0%, #f3e8ff 100%); border: 1px solid #e9d5ff; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
-      <div style="font-size: 12px; font-weight: 600; color: #6b21a8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Origins & Attribution</div>
-      <p style="font-size: 14px; line-height: 1.6; color: #333; margin: 0;">
-        <strong>"Vibe coding"</strong> was coined by Andrej Karpathy on <a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: #7c3aed; text-decoration: none;">2 February 2025</a> to describe building without reading generated code.
-        <strong>"Spec-Driven Development"</strong> as an AI-era discipline is most associated with
-        <a href="https://www.youtube.com/watch?v=BIvILtt164I" target="_blank" style="color: #7c3aed; text-decoration: none;">Sean Grove's <em>The New Code</em> talk</a> (AI Engineer World's Fair 2025),
-        <a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" style="color: #7c3aed; text-decoration: none;">GitHub's Spec Kit launch</a> (August 2025), and
-        <a href="https://kiro.dev/" target="_blank" style="color: #7c3aed; text-decoration: none;">Amazon's Kiro IDE</a>.
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Origins &amp; Attribution</div>
+      <p style="font-size: 14px; line-height: 1.6; color: var(--muted); margin: 0;">
+        <strong style="color: var(--text);">"Vibe coding"</strong> was coined by Andrej Karpathy on <a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: var(--accent2); text-decoration: none;">2 February 2025</a> to describe building software without reading the generated code.
+        <strong style="color: var(--text);">"Spec-Driven Development"</strong> as an AI-era discipline is most associated with
+        <a href="https://www.youtube.com/watch?v=BIvILtt164I" target="_blank" style="color: var(--accent2); text-decoration: none;">Sean Grove's <em>The New Code</em> talk</a> (AI Engineer World's Fair 2025),
+        <a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" style="color: var(--accent2); text-decoration: none;">GitHub's Spec Kit launch</a> (August 2025), and
+        <a href="https://kiro.dev/" target="_blank" style="color: var(--accent2); text-decoration: none;">Amazon's Kiro IDE</a>.
       </p>
     </div>
     <div class="compare-grid">
@@ -696,15 +763,15 @@
     <div class="section-label">The Process</div>
     <h2>How Spec Driven Development works</h2>
     <p class="section-intro">
-      Five steps that transform ambiguous intent into deterministic, agent-ready systems.
+      Five steps that turn ambiguous intent into deterministic, agent-ready systems.
       Click each step to expand.
     </p>
-    <p style="font-size: 14px; line-height: 1.6; color: #555; max-width: 800px; margin: 0 0 24px 0; font-style: italic;">
-      <strong>Lineage:</strong> This loop has deep roots. <a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: #3b82f6; text-decoration: none;">Design by Contract</a> (Meyer, 1988), <a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: #3b82f6; text-decoration: none;">Behavior-Driven Development</a> (North, 2006), <a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: #3b82f6; text-decoration: none;">Specification by Example</a> (Adzic, 2011), and <a href="https://en.wikipedia.org/wiki/QuickCheck" target="_blank" style="color: #3b82f6; text-decoration: none;">property-based testing</a> (Claessen & Hughes) all argued — long before LLMs — that a precise, executable description of behaviour should sit upstream of both code and tests. SDD adapts that lineage to AI agents.
+    <p style="font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 800px; margin: 0 0 24px 0; font-style: italic;">
+      <strong style="color: var(--text);">Lineage:</strong> This loop has deep roots. <a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2); text-decoration: none;">Design by Contract</a> (Meyer, 1988), <a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: var(--accent2); text-decoration: none;">Behavior-Driven Development</a> (North, 2006), <a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: var(--accent2); text-decoration: none;">Specification by Example</a> (Adzic, 2011), and <a href="https://en.wikipedia.org/wiki/QuickCheck" target="_blank" style="color: var(--accent2); text-decoration: none;">property-based testing</a> all argued — long before LLMs — that a precise description of behavior should sit upstream of both code and tests. SDD applies that idea to AI agents.
     </p>
     <div class="timeline" id="timeline">
 
-      <div class="timeline-item" onclick="toggleTimeline(this)">
+      <button class="timeline-item" onclick="toggleTimeline(this)">
         <div class="timeline-dot">1</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 01</div>
@@ -716,13 +783,13 @@
               what are the inputs? outputs? invariants? edge cases? side effects?
               It doesn't say <em>how</em> — only <em>what</em>.
               Write it in YAML, Markdown, or a structured format your agents can parse.
-              This is the <strong>single source of truth</strong> that every downstream step references.
+              This becomes the <strong>single source of truth</strong> that every downstream step measures against.
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
-      <div class="timeline-item" onclick="toggleTimeline(this)">
+      <button class="timeline-item" onclick="toggleTimeline(this)">
         <div class="timeline-dot">2</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 02</div>
@@ -733,65 +800,64 @@
               Each invariant in the spec becomes a test assertion. Each edge case becomes a test scenario.
               Because tests come from the spec — not from reading the code — they catch
               <strong>intent violations</strong>, not just implementation bugs.
-              You can automate this with agents: feed the spec, get a test suite back.
+              You can automate this: feed the spec to your coding agent and ask it to generate a test suite.
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
-      <div class="timeline-item" onclick="toggleTimeline(this)">
+      <button class="timeline-item" onclick="toggleTimeline(this)">
         <div class="timeline-dot">3</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 03</div>
           <h3>Implement Against the Spec</h3>
-          <p>Pass the spec (not just a vague prompt) to your AI agent or developer.</p>
+          <p>Pass the spec — not just a vague description — to your AI agent or developer.</p>
           <div class="timeline-detail">
             <div class="timeline-detail-inner">
               With a spec in hand, an AI coding agent has <strong>unambiguous context</strong>.
               It knows exactly what to build, what to validate, and what failure looks like.
-              There's no room for hallucinated assumptions.
-              The implementation is constrained by the spec — not the agent's best guess at
-              what you probably meant.
+              There's no room for hallucinated assumptions — the implementation is constrained by the spec,
+              not by the agent's best guess at what you probably meant.
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
-      <div class="timeline-item" onclick="toggleTimeline(this)">
+      <button class="timeline-item" onclick="toggleTimeline(this)">
         <div class="timeline-dot">4</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 04</div>
           <h3>Validate Against Invariants</h3>
-          <p>Run the spec-derived tests. Any failure points back to the spec, not to intuition.</p>
+          <p>Run the spec-derived tests. Any failure points back to a specific spec invariant.</p>
           <div class="timeline-detail">
             <div class="timeline-detail-inner">
               When tests fail, <strong>the spec tells you exactly which invariant was violated</strong>.
               This is debugging with precision — not archaeology. You know what broke,
               why it's wrong (the spec says so), and what correct behavior looks like.
-              Fix the implementation or revise the spec — both are explicit decisions.
+              Fix the implementation, or revise the spec — both are explicit decisions.
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
-      <div class="timeline-item" onclick="toggleTimeline(this)">
+      <button class="timeline-item" onclick="toggleTimeline(this)">
         <div class="timeline-dot">5</div>
         <div class="timeline-content">
           <div class="timeline-step">Step 05</div>
           <h3>Evolve Specs, Not Just Code</h3>
-          <p>When requirements change, update the spec. Everything else follows.</p>
+          <p>When requirements change, update the spec first. Everything else follows.</p>
           <div class="timeline-detail">
             <div class="timeline-detail-inner">
               In vibe coding, requirements drift silently. In SDD,
-              <strong>every change is a spec change first</strong>.
-              Update the spec → regenerate/update tests → update implementation.
+              <strong>every change starts with a spec change</strong>.
+              Update the spec → update tests → update implementation.
               The diff in the spec file <em>is</em> the changelog.
-              Agents can be re-run against the new spec without any human re-explanation.
-              This is what makes agentic engineering <strong>composable and repeatable</strong>.
+              Agents can be re-run against the new spec without any human re-explanation —
+              this is what makes agentic engineering <strong>composable and repeatable</strong>.
             </div>
           </div>
         </div>
-      </div>
+      </button>
 
     </div>
   </div>
@@ -807,7 +873,7 @@
       Click each to learn more.
     </p>
     <div class="principles-grid">
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">01</div>
         <span class="principle-icon">📋</span>
         <h3>Spec is the Source of Truth</h3>
@@ -817,30 +883,30 @@
           If your code passes tests but violates the spec, your tests are wrong.
           Every agent, every developer, every reviewer reads the same spec.
         </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">02</div>
         <span class="principle-icon">🎯</span>
         <h3>Precision over Intuition</h3>
         <p>Ambiguity is technical debt. Every undefined behavior is a future bug waiting to happen.</p>
         <div class="principle-expand">
           Vague intent produces vague output. When you write "it should handle errors gracefully,"
-          you've written nothing. A spec says: <strong>"on input validation failure, return status 422
+          you've written nothing actionable. A spec says: <strong>"on input validation failure, return status 422
           with a typed error payload"</strong>. Agents can implement that. They can't implement vibes.
         </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">03</div>
         <span class="principle-icon">🤖</span>
         <h3>Agent-First Design</h3>
         <p>Design your specs to be consumed by machines, not just read by humans.</p>
         <div class="principle-expand">
           Specs should be <strong>structured, parseable, and self-contained</strong>.
-          Use this question as a <strong>completeness test</strong>: Could an agent implement this from the spec alone?
-          If the answer is "probably not," the spec needs work. (In practice, agents will still ask clarifying questions and occasionally hallucinate — the goal is to make the spec good enough that those gaps shrink to a minimum.)
+          Use this as a completeness test: could an agent implement this from the spec alone, without asking follow-up questions?
+          If the answer is "probably not," the spec needs more work.
         </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">04</div>
         <span class="principle-icon">🔗</span>
         <h3>Traceability</h3>
@@ -851,8 +917,8 @@
           <strong>Full traceability</strong> means every artifact in your system
           is grounded in explicit, reviewable intent.
         </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">05</div>
         <span class="principle-icon">♻️</span>
         <h3>Composability</h3>
@@ -863,262 +929,19 @@
           An agent that understands one spec can be orchestrated into a pipeline
           because every interface is explicit.
         </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
         <div class="principle-num">06</div>
         <span class="principle-icon">🔄</span>
         <h3>Continuous Alignment</h3>
-        <p>Specs stay alive. They are maintained, versioned, and reviewed like production code.</p>
+        <p>Specs stay alive. They are versioned and reviewed like production code.</p>
         <div class="principle-expand">
-          A spec that gets out of date is worse than no spec — it's misleading.
+          A spec that falls out of date is worse than no spec — it actively misleads.
           <strong>Version your specs</strong>, review spec changes as seriously as code changes,
           and automate spec validation in CI.
           The spec's health is the system's health.
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LIMITATIONS -->
-<section class="limitations-section" id="limitations">
-  <div class="container">
-    <div class="section-label">Reality Check</div>
-    <h2>Known limitations and open questions</h2>
-    <p class="section-intro">
-      SDD is powerful, but it's not a silver bullet. Here's where the model meets the real world.
-    </p>
-    <div class="principles-grid">
-      <div class="principle-card" onclick="togglePrinciple(this)">
-        <div class="principle-num">⚠️</div>
-        <span class="principle-icon">📝</span>
-        <h3>Specs can be wrong</h3>
-        <p>SDD shifts the bug from code to spec — a net win, but not a panacea.</p>
-        <div class="principle-expand">
-          A precise spec that describes the wrong behavior is worse than a vague one.
-          SDD doesn't eliminate the need for requirements review, user testing, or threat modelling.
-          It makes those problems <strong>visible earlier</strong>, but they're still your problem.
-        </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
-        <div class="principle-num">⚠️</div>
-        <span class="principle-icon">📉</span>
-        <h3>Spec drift</h3>
-        <p>Without enforced CI gates, specs rot like docs.</p>
-        <div class="principle-expand">
-          A spec that's out of date is actively misleading. SDD requires discipline:
-          <strong>version specs, enforce traceability checks in CI, make spec changes visible</strong>,
-          and review them as seriously as code changes.
-          This is overhead, and it's mandatory.
-        </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
-        <div class="principle-num">⚠️</div>
-        <span class="principle-icon">📏</span>
-        <h3>Over-specification cost</h3>
-        <p>Tiny features don't deserve a 200-line spec.</p>
-        <div class="principle-expand">
-          SDD has a viability floor. A one-off script, a quick experiment, or a "good enough" fix
-          may not justify the spec overhead.
-          <strong>Use judgment:</strong> SDD shines on systems that need to scale, hand off, or remain stable.
-          For throwaway code, vibe away.
-        </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
-        <div class="principle-num">⚠️</div>
-        <span class="principle-icon">🤖</span>
-        <h3>LLMs still hallucinate</h3>
-        <p>Even with structured input, models invent APIs and fields.</p>
-        <div class="principle-expand">
-          Tight specs <strong>narrow the surface area for hallucination</strong> but don't eliminate it.
-          An agent given a perfect spec can still produce off-spec output.
-          Code review, testing, and validation gates are still essential.
-          (See <a href="https://dl.acm.org/doi/10.1145/3571730" target="_blank" style="color: #3b82f6;">Ji et al. 2023 on LLM hallucination</a>.)
-        </div>
-      </div>
-      <div class="principle-card" onclick="togglePrinciple(this)">
-        <div class="principle-num">⚠️</div>
-        <span class="principle-icon">⚖️</span>
-        <h3>Control vs. structure trade-off</h3>
-        <p>Process-owning frameworks (Spec Kit, BMAD) trade developer control for structure.</p>
-        <div class="principle-expand">
-          Matt Pocock's counter-argument: by adopting a heavy framework,
-          you gain reproducibility but lose flexibility and ownership.
-          This is a real, ongoing debate.
-          <strong>Consider your team's values:</strong> Do you want a prescribed workflow, or flexibility?
-          (Both can be spec-driven; the choice is yours.)
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- QUIZ -->
-<section class="quiz-section" id="quiz">
-  <div class="container">
-    <div class="section-label">Test Yourself</div>
-    <h2>Are you a vibe coder?</h2>
-    <p class="section-intro">Five quick questions to find out where you stand — and what to do next.</p>
-
-    <div class="quiz-card" id="quiz-card">
-      <div class="quiz-progress" id="quiz-progress"></div>
-      <div id="quiz-body"></div>
-    </div>
-  </div>
-</section>
-
-
-
-<!-- ECOSYSTEM / METHODS -->
-<section class="ecosystem-section" id="ecosystem">
-  <div class="container">
-    <div class="section-label">Tooling &amp; Methods</div>
-    <h2>How teams make SDD real</h2>
-    <p class="section-intro">
-      Specs are the foundation — but execution needs a workflow and “agent ergonomics”.
-      Below are popular approaches you can adopt, mix, or fork to fit your team.
-    </p>
-
-    <div class="ecosystem-grid">
-      <div class="eco-callout">
-        <div class="eco-title">Think in layers: <span class="tag">spec</span> → <span class="tag">workflow</span> → <span class="tag">skills</span> → <span class="tag">automation</span></div>
-        <p>
-          A good spec format defines behavior. A good workflow decides <em>when</em> to clarify, plan, test, and ship.
-          Skills encode repeatable micro-processes (grilling, TDD, PRD, review). Automation glues it all together.
-        </p>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">BMAD Method</div>
-          <div class="eco-tags">
-            <span class="eco-tag">workflow</span><span class="eco-tag">agile</span><span class="eco-tag">multi-agent</span>
-          </div>
-        </div>
-        <div class="eco-desc">A structured AI-driven agile development framework with facilitated workflows and specialized roles.</div>
-        <ul class="eco-bullets">
-          <li>Good for: end-to-end project lifecycle scaffolding</li>
-          <li>Pattern: roles + rituals + scale-adaptive planning</li>
-          <li>SDD tie-in: turns “spec first” into a repeatable team process</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://github.com/bmad-code-org/BMAD-METHOD" target="_blank">Repo</a>
-          <a href="https://docs.bmad-method.org" target="_blank">Docs</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">Matt Pocock’s Agent Skills</div>
-          <div class="eco-tags">
-            <span class="eco-tag">skills</span><span class="eco-tag">TDD</span><span class="eco-tag">grilling</span>
-          </div>
-        </div>
-        <div class="eco-desc">A composable “engineering discipline pack” for agents: grill for alignment, TDD for feedback, diagnose for debugging. Positioned as a <strong>lighter alternative</strong> to heavier frameworks — composable discipline without framework lock-in.</div>
-        <ul class="eco-bullets">
-          <li>Good for: improving agent reliability without adopting a full framework</li>
-          <li>Pattern: small skills you remix per team/project</li>
-          <li>SDD tie-in: produces higher-quality specs &amp; tests through enforced loops</li>
-          <li><em>Note:</em> Pocock argues that process-heavy frameworks trade developer control for structure — his skills offer the discipline without the framework overhead</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://github.com/mattpocock/skills" target="_blank">Repo</a>
-          <a href="https://mdias.info/posts/cloning-matt-pocock-opencode/" target="_blank">Example orchestrator</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">GitHub Spec Kit (+ Speckit skills)</div>
-          <div class="eco-tags">
-            <span class="eco-tag">spec-kit</span><span class="eco-tag">extensions</span><span class="eco-tag">presets</span>
-          </div>
-        </div>
-        <div class="eco-desc">A spec-driven toolkit with a CLI workflow (constitution → specify → plan → tasks → implement) and an extension system.</div>
-        <ul class="eco-bullets">
-          <li>Good for: a standardized “spec → plan → tasks” pipeline</li>
-          <li>Pattern: extensions add phases, presets customize artifacts</li>
-          <li>SDD tie-in: makes spec changes the primary unit of change</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://github.com/github/spec-kit" target="_blank">Repo</a>
-          <a href="https://github.com/dceoy/speckit-agent-skills" target="_blank">Speckit agent skills</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">OpenSpec</div>
-          <div class="eco-tags">
-            <span class="eco-tag">artifact-guided</span><span class="eco-tag">workflow</span><span class="eco-tag">brownfield</span>
-          </div>
-        </div>
-        <div class="eco-desc">A spec framework optimized for iterative workflows and brownfield codebases, with artifact-guided prompts/commands.</div>
-        <ul class="eco-bullets">
-          <li>Good for: adopting SDD incrementally on existing systems</li>
-          <li>Pattern: guided artifacts + repeatable commands</li>
-          <li>SDD tie-in: tightens the loop between artifacts, tests, and code</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://github.com/Fission-AI/OpenSpec" target="_blank">Repo</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">Superpowers <span style="font-weight: 400; font-size: 13px; color: #666;">(by Jesse Vincent / obra)</span></div>
-          <div class="eco-tags">
-            <span class="eco-tag">methodology</span><span class="eco-tag">TDD</span><span class="eco-tag">subagents</span>
-          </div>
-        </div>
-        <div class="eco-desc">A methodology + skills stack that forces: spec → design → plan → subagent execution with reviews (strong TDD + quality gates).</div>
-        <ul class="eco-bullets">
-          <li>Good for: long autonomous runs with strong guardrails</li>
-          <li>Pattern: auto-triggered skills + subagent-driven development</li>
-          <li>SDD tie-in: makes “sign off the spec/design” an explicit gate</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://github.com/obra/superpowers" target="_blank">Repo</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
-          <div class="eco-title">Amazon Kiro</div>
-          <div class="eco-tags">
-            <span class="eco-tag">IDE</span><span class="eco-tag">spec-first</span><span class="eco-tag">commercial</span>
-          </div>
-        </div>
-        <div class="eco-desc">A commercial IDE built around spec-driven development, treating specs as first-class project artifacts that drive requirements, design, and implementation.</div>
-        <ul class="eco-bullets">
-          <li>Good for: teams wanting a spec-first workflow baked into the IDE itself</li>
-          <li>Pattern: spec → design → code, all within one tool</li>
-          <li>SDD tie-in: makes spec-driven workflows the default development mode</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://kiro.dev/" target="_blank">Website</a>
-          <a href="https://kiro.dev/blog" target="_blank">Blog</a>
-        </div>
-      </div>
-
-      <div class="eco-card wide">
-        <div class="eco-top">
-          <div class="eco-title">Build your own: skills, templates, and gates</div>
-          <div class="eco-tags">
-            <span class="eco-tag">custom</span><span class="eco-tag">team</span><span class="eco-tag">automation</span>
-          </div>
-        </div>
-        <div class="eco-desc">A pragmatic way to extend SDD without betting on one framework.</div>
-        <ul class="eco-bullets">
-          <li><strong>Start with 2–3 skills</strong>: align (grill), test (TDD), debug (diagnose).</li>
-          <li><strong>Add templates</strong>: spec.md, plan.md, tasks.md, ADRs, glossary/CONTEXT.md.</li>
-          <li><strong>Add CI gates</strong>: validate spec schema, block merges if spec drift is detected, require traceability links.</li>
-          <li><strong>Make it ergonomic</strong>: one command that runs the whole loop: spec → tests → implementation → verify.</li>
-        </ul>
-        <div class="eco-links">
-          <a href="#spec">See spec formats ↓</a>
-        </div>
-      </div>
+      </button>
     </div>
   </div>
 </section>
@@ -1129,12 +952,12 @@
     <div class="section-label">Real Examples</div>
     <h2>What a spec actually looks like</h2>
     <p class="section-intro">
-      Three real spec formats for the same feature — pick the one that fits your stack.
+      Three formats for the same feature. All three carry the same information — pick whichever fits your stack.
     </p>
     <div class="spec-tabs">
-      <div class="spec-tab active" onclick="switchTab(this, 'yaml')">YAML Spec</div>
-      <div class="spec-tab" onclick="switchTab(this, 'md')">Markdown Spec</div>
-      <div class="spec-tab" onclick="switchTab(this, 'ts')">TypeScript Contract</div>
+      <div class="spec-tab active" role="tab" tabindex="0" onclick="switchTab(this, 'yaml')" onkeydown="if(event.key==='Enter'||event.key===' ')switchTab(this,'yaml')">YAML Spec</div>
+      <div class="spec-tab" role="tab" tabindex="0" onclick="switchTab(this, 'md')" onkeydown="if(event.key==='Enter'||event.key===' ')switchTab(this,'md')">Markdown Spec</div>
+      <div class="spec-tab" role="tab" tabindex="0" onclick="switchTab(this, 'ts')" onkeydown="if(event.key==='Enter'||event.key===' ')switchTab(this,'ts')">TypeScript Contract</div>
     </div>
 
     <div class="spec-pane active" id="tab-yaml">
@@ -1247,6 +1070,368 @@ a short-lived JWT. All auth events are audited.
   </div>
 </section>
 
+<!-- ECOSYSTEM / METHODS -->
+<section class="ecosystem-section" id="ecosystem">
+  <div class="container">
+    <div class="section-label">Tooling &amp; Methods</div>
+    <h2>How teams make SDD real</h2>
+    <p class="section-intro">
+      Every tool below maps to the same five-stage loop. The tools differ in how much they automate each stage.
+    </p>
+
+    <!-- The loop -->
+    <div class="eco-callout" style="margin-bottom: 2rem;">
+      <div class="eco-title">The SDD loop — five stages, every feature</div>
+      <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; align-items: center;">
+        <span class="tag">1 · Clarify</span>
+        <span style="color: var(--faint);">→</span>
+        <span class="tag">2 · Spec</span>
+        <span style="color: var(--faint);">→</span>
+        <span class="tag">3 · Tests</span>
+        <span style="color: var(--faint);">→</span>
+        <span class="tag">4 · Implement</span>
+        <span style="color: var(--faint);">→</span>
+        <span class="tag">5 · Verify</span>
+      </div>
+      <p style="margin-top: 0.75rem;">Don't skip stage 1. Most spec bugs are unanswered clarification questions in disguise.</p>
+    </div>
+
+    <!-- Walkthrough -->
+    <div class="walkthrough">
+      <div class="section-label" style="margin-bottom: 0.5rem;">Worked Example</div>
+      <h3 style="font-size: 1.2rem; margin-bottom: 0.4rem;">Adding a password reset endpoint — step by step</h3>
+      <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 1.75rem; line-height: 1.6;">
+        A concrete walkthrough using real tools. The tools vary — the five stages don't.
+      </p>
+
+      <div class="walk-step">
+        <div class="walk-num">1</div>
+        <div class="walk-body">
+          <div class="walk-title">Clarify — interrogate the requirement before writing anything</div>
+          <p class="walk-desc">
+            Before you open a spec file, resolve every ambiguity: Who triggers the reset — the user, an admin, or both? What is the token TTL? If a user requests two resets in a row, does the first token expire immediately? What happens when an expired token is used? Each unanswered question is a future production bug.
+          </p>
+          <div class="walk-code">
+<span class="wc-comment"># With Pocock's /grill skill (Claude Code):</span>
+<span class="wc-label">You:</span>  <span class="wc-str">"Add a password reset flow to the auth service"</span>
+<span class="wc-label">Agent:</span> Asks ~10 clarifying questions — token TTL? email vs. SMS? concurrent reset handling?
+        You answer each before any spec is written.
+
+<span class="wc-comment"># With BMAD Analyst agent:</span>
+<span class="wc-label">You:</span>  Describe the feature in plain text
+<span class="wc-label">Agent:</span> Outputs a PRD with acceptance criteria you must sign off before proceeding</div>
+        </div>
+      </div>
+
+      <div class="walk-step">
+        <div class="walk-num">2</div>
+        <div class="walk-body">
+          <div class="walk-title">Spec — define what the system must do, not how</div>
+          <p class="walk-desc">
+            Write inputs, outputs, error codes, invariants, and side effects. This is the contract. Every downstream step — tests, implementation, code review — is measured against it. If it's not in the spec, you cannot assume it's implemented correctly.
+          </p>
+          <div class="walk-code">
+<span class="wc-comment"># GitHub Spec Kit CLI:</span>
+<span class="wc-cmd">$ speckit specify password-reset</span>
+  → generates <span class="wc-str">specs/password-reset.md</span> with a structured template to fill in
+
+<span class="wc-comment"># Kiro IDE:</span>
+  Describe the feature in plain text → Kiro drafts requirements + design doc
+  → you review and approve before any agent starts writing code
+
+<span class="wc-comment"># Manual (works with any agent):</span>
+  Create <span class="wc-str">specs/password-reset.yaml</span> with inputs, outputs, invariants, side_effects
+  → see the YAML format in Spec Examples above</div>
+        </div>
+      </div>
+
+      <div class="walk-step">
+        <div class="walk-num">3</div>
+        <div class="walk-body">
+          <div class="walk-title">Tests — derive them from the spec, not from the code</div>
+          <p class="walk-desc">
+            Each invariant becomes a test assertion. Each error code becomes a test scenario. Tests written from the spec catch intent violations — not just implementation bugs. A test suite generated from the code will only verify what the code already does.
+          </p>
+          <div class="walk-code">
+<span class="wc-comment"># Pass the spec to your coding agent:</span>
+<span class="wc-str">"Read specs/password-reset.yaml. Write a test suite that covers every
+ invariant and every error case. Tests should fail until the endpoint exists."</span>
+
+<span class="wc-comment"># With Pocock's /tdd skill:</span>
+  Agent writes failing tests first. It will not write implementation code until the tests exist.
+
+<span class="wc-comment"># With BMAD QA agent:</span>
+  Reads the spec → generates a full test plan → hands off to the Developer agent</div>
+        </div>
+      </div>
+
+      <div class="walk-step">
+        <div class="walk-num">4</div>
+        <div class="walk-body">
+          <div class="walk-title">Implement — give the agent the spec and the failing tests</div>
+          <p class="walk-desc">
+            The agent has unambiguous context: a spec that defines behavior and tests that define done. It knows exactly what to build and cannot fill missing requirements with guesses. The spec eliminates the class of bugs that come from agents making reasonable-sounding but wrong assumptions.
+          </p>
+          <div class="walk-code">
+<span class="wc-comment"># Prompt your coding agent (Claude Code, Copilot, etc.):</span>
+<span class="wc-str">"Implement POST /auth/reset-password.
+ Spec:  specs/password-reset.yaml
+ Tests: tests/password-reset.test.ts — all must pass."</span>
+
+<span class="wc-comment"># GitHub Spec Kit:</span>
+<span class="wc-cmd">$ speckit plan</span>    → breaks the spec into an ordered task list
+<span class="wc-cmd">$ speckit tasks</span>   → outputs individual task files; run each through your agent
+
+<span class="wc-comment"># Kiro IDE:</span>
+  Click "Implement" → agents work through the task list, checking each task against the spec</div>
+        </div>
+      </div>
+
+      <div class="walk-step">
+        <div class="walk-num">5</div>
+        <div class="walk-body">
+          <div class="walk-title">Verify — failures name which invariant was violated, not just "something broke"</div>
+          <p class="walk-desc">
+            Run the tests. A red test tells you which invariant is broken and what correct behavior looks like. If the spec was wrong, update the spec first — then tests, then code. If the code was wrong, fix the code. Either way you know exactly what to change and why.
+          </p>
+          <div class="walk-code">
+<span class="wc-comment"># CI gate (any stack):</span>
+  Block merges when spec and implementation diverge — spec drift becomes a build failure.
+
+<span class="wc-comment"># Pocock's /diagnose skill:</span>
+  Paste the failing test + the spec → agent traces the failure back to the violated invariant.
+
+<span class="wc-comment"># Kiro spec hooks:</span>
+  Watch the codebase in real time and alert when a code change breaks a spec invariant.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tool cards -->
+    <div class="section-label" style="margin-bottom: 1.25rem;">Tools and frameworks</div>
+    <div class="ecosystem-grid">
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">BMAD Method</div>
+          <div class="eco-tags">
+            <span class="eco-tag">workflow</span><span class="eco-tag">multi-agent</span><span class="eco-tag">agile</span>
+          </div>
+        </div>
+        <div class="eco-desc">A framework where each development phase is handled by a specialized agent with a defined role: Analyst, Architect, PM, Developer, QA.</div>
+        <ul class="eco-bullets">
+          <li><strong>Stage 1–2:</strong> Analyst agent turns a brief into a PRD; Architect produces a technical design doc</li>
+          <li><strong>Stage 3–4:</strong> PM agent generates spec files and tasks; Developer agent implements against them</li>
+          <li><strong>Stage 5:</strong> QA agent verifies implementation against spec acceptance criteria</li>
+          <li>Best for teams who want a fully guided, end-to-end workflow with explicit agent roles</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://github.com/bmad-code-org/BMAD-METHOD" target="_blank">Repo</a>
+          <a href="https://docs.bmad-method.org" target="_blank">Docs</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">Matt Pocock's Agent Skills</div>
+          <div class="eco-tags">
+            <span class="eco-tag">skills</span><span class="eco-tag">TDD</span><span class="eco-tag">lightweight</span>
+          </div>
+        </div>
+        <div class="eco-desc">A set of slash commands you add to Claude Code that enforce spec-first discipline at each stage. Composable — use only what your team needs.</div>
+        <ul class="eco-bullets">
+          <li><strong>/grill:</strong> paste a requirement → agent asks hard questions you haven't answered yet</li>
+          <li><strong>/tdd:</strong> agent writes failing tests before implementation; refuses to code otherwise</li>
+          <li><strong>/diagnose:</strong> structured debugging that traces failures back to the violated spec invariant</li>
+          <li>Best for developers who want discipline without adopting a full framework</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://github.com/mattpocock/skills" target="_blank">Repo</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">GitHub Spec Kit</div>
+          <div class="eco-tags">
+            <span class="eco-tag">CLI</span><span class="eco-tag">pipeline</span><span class="eco-tag">open-source</span>
+          </div>
+        </div>
+        <div class="eco-desc">A CLI that enforces the spec-first pipeline with concrete commands at each stage, designed to plug into any CI system.</div>
+        <ul class="eco-bullets">
+          <li><strong>constitution:</strong> one-time project setup — defines constraints and conventions</li>
+          <li><strong>specify &lt;feature&gt;:</strong> generates a spec template for a feature to fill in</li>
+          <li><strong>plan:</strong> breaks the approved spec into an ordered task list</li>
+          <li><strong>tasks:</strong> outputs individual task files; pass each to your coding agent</li>
+          <li>Best for teams who want a CLI-driven, CI-friendly spec pipeline</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://github.com/github/spec-kit" target="_blank">Repo</a>
+          <a href="https://github.com/dceoy/speckit-agent-skills" target="_blank">Agent skills extension</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">Amazon Kiro</div>
+          <div class="eco-tags">
+            <span class="eco-tag">IDE</span><span class="eco-tag">spec-first</span><span class="eco-tag">commercial</span>
+          </div>
+        </div>
+        <div class="eco-desc">A VS Code-based IDE where specs are first-class project artifacts. Agents cannot start implementation until you review and approve the spec.</div>
+        <ul class="eco-bullets">
+          <li><strong>Stage 1–2:</strong> describe in plain text → Kiro generates requirements + design doc for your review</li>
+          <li><strong>Stage 3–4:</strong> approve the spec → agents implement against the task list</li>
+          <li><strong>Stage 5:</strong> spec hooks watch your code in real time and alert when a change violates a spec invariant</li>
+          <li>Best for teams who want the full spec-first loop baked into the IDE</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://kiro.dev/" target="_blank">Website</a>
+          <a href="https://kiro.dev/blog" target="_blank">Blog</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">OpenSpec</div>
+          <div class="eco-tags">
+            <span class="eco-tag">brownfield</span><span class="eco-tag">incremental</span><span class="eco-tag">open-source</span>
+          </div>
+        </div>
+        <div class="eco-desc">A spec framework built for existing codebases. It extracts the implicit behavior already in your code as a spec you then verify and maintain.</div>
+        <ul class="eco-bullets">
+          <li>Run guided commands on existing files → agent extracts implicit behavior as a draft spec</li>
+          <li>Review and correct the draft — this becomes the baseline spec for that module</li>
+          <li>New features extend the spec; old code gains coverage incrementally</li>
+          <li>Best for teams adopting SDD on an existing system without rewriting it</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://github.com/Fission-AI/OpenSpec" target="_blank">Repo</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">Superpowers <span style="font-weight: 400; font-size: 13px; color: var(--muted);">(obra / Jesse Vincent)</span></div>
+          <div class="eco-tags">
+            <span class="eco-tag">subagents</span><span class="eco-tag">TDD</span><span class="eco-tag">gates</span>
+          </div>
+        </div>
+        <div class="eco-desc">A methodology with auto-triggered skills and mandatory review checkpoints. Agents cannot proceed past a gate without explicit sign-off.</div>
+        <ul class="eco-bullets">
+          <li>Write spec/design doc → triggers spec review gate; you must approve before agents run</li>
+          <li>Auto-triggered TDD skill enforces tests-first — no implementation without passing tests</li>
+          <li>Subagents handle implementation in parallel; each milestone requires human review</li>
+          <li>Best for long autonomous runs where strong guardrails matter more than speed</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://github.com/obra/superpowers" target="_blank">Repo</a>
+        </div>
+      </div>
+
+      <div class="eco-card wide">
+        <div class="eco-top">
+          <div class="eco-title">No framework? Start with one rule and one file</div>
+          <div class="eco-tags">
+            <span class="eco-tag">manual</span><span class="eco-tag">incremental</span>
+          </div>
+        </div>
+        <div class="eco-desc">You don't need a framework to start practicing SDD. Pick one rule: the agent doesn't write code until a spec file exists.</div>
+        <ul class="eco-bullets">
+          <li><strong>Week 1:</strong> Create a <code>specs/</code> directory. Before your next feature, write a spec in YAML or Markdown (use the format from Spec Examples above). Pass it to your agent instead of a plain English description. Observe what changes.</li>
+          <li><strong>Week 2:</strong> Add a second rule: agent generates tests from the spec before writing any implementation. No tests, no code.</li>
+          <li><strong>Week 3:</strong> Add a CI check that fails if a new feature directory has no corresponding spec file in <code>specs/</code>.</li>
+          <li><strong>Week 4+:</strong> Add traceability — every PR description links to the spec line that motivated each change. Review spec diffs as seriously as code diffs.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section class="limitations-section" id="limitations" style="background: var(--bg2); border-top: 1px solid var(--border);">
+  <div class="container">
+    <div class="section-label">Reality Check</div>
+    <h2>Known limitations and trade-offs</h2>
+    <p class="section-intro">
+      SDD is not a silver bullet. Here's where the model meets the real world.
+    </p>
+    <div class="principles-grid">
+      <button class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">⚠️</div>
+        <span class="principle-icon">📝</span>
+        <h3>Specs can be wrong</h3>
+        <p>SDD shifts the bug from code to spec — a net win, but not a cure.</p>
+        <div class="principle-expand">
+          A precise spec that describes the wrong behavior is worse than a vague one — it's confidently wrong.
+          SDD doesn't eliminate the need for requirements review, user testing, or threat modelling.
+          It makes those problems <strong>visible earlier</strong>, but they're still your problem to solve.
+        </div>
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">⚠️</div>
+        <span class="principle-icon">📉</span>
+        <h3>Spec drift</h3>
+        <p>Without CI gates, specs rot like documentation.</p>
+        <div class="principle-expand">
+          A spec that's out of date is actively misleading. SDD requires sustained discipline:
+          <strong>version specs, enforce traceability in CI, make spec changes visible in code review</strong>.
+          Skipping this turns your spec directory into a graveyard of stale promises.
+        </div>
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">⚠️</div>
+        <span class="principle-icon">📏</span>
+        <h3>Not every feature needs a formal spec</h3>
+        <p>Small, throwaway changes don't justify the overhead.</p>
+        <div class="principle-expand">
+          SDD has a viability floor. A one-off script, a quick config change, or a "fix this typo" patch
+          doesn't need a spec file. <strong>Use judgment:</strong> SDD pays off on features that need to be
+          handed off, scaled, or kept stable over time. For throwaway code, move fast.
+        </div>
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">⚠️</div>
+        <span class="principle-icon">🤖</span>
+        <h3>LLMs still hallucinate</h3>
+        <p>Even with structured input, models invent APIs and misread constraints.</p>
+        <div class="principle-expand">
+          Tight specs <strong>narrow the surface area for hallucination</strong> — but don't eliminate it.
+          An agent given a complete spec can still produce off-spec output.
+          Code review, test suites, and CI validation gates remain essential.
+          SDD reduces agent errors; it doesn't remove the need to verify agent output.
+        </div>
+      </button>
+      <button class="principle-card" onclick="togglePrinciple(this)">
+        <div class="principle-num">⚠️</div>
+        <span class="principle-icon">⚖️</span>
+        <h3>Framework overhead vs. flexibility</h3>
+        <p>Heavy frameworks trade developer control for structure.</p>
+        <div class="principle-expand">
+          Adopting BMAD or Spec Kit gives you reproducibility but adds process overhead and reduces flexibility.
+          Matt Pocock's counter-argument: use composable skills instead of a framework — get the discipline without the lock-in.
+          <strong>Neither position is universally correct.</strong> Choose based on your team's size, autonomy needs, and tolerance for process.
+        </div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="section-label">Test Yourself</div>
+    <h2>Are you a vibe coder?</h2>
+    <p class="section-intro">Five quick questions to find out where you stand — and what to do next.</p>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <div id="quiz-body"></div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <p>Built with ❤️ to move developers from vibes to engineering.</p>
@@ -1255,22 +1440,22 @@ a short-lived JWT. All auth events are audited.
     &nbsp;·&nbsp;
     Spec Driven Development — the foundation of agentic engineering.
   </p>
-  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 13px;">
-    <button onclick="toggleReferences()" style="background: none; border: none; color: #3b82f6; cursor: pointer; font-weight: 600; padding: 0; text-decoration: underline;">Show sources</button>
-    <div id="references-content" style="display: none; margin-top: 12px; line-height: 1.6; color: #666;">
-      <p style="margin: 0 0 8px 0;"><strong>Origins &amp; Key References:</strong></p>
+  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px;">
+    <button onclick="toggleReferences()" style="background: none; border: none; color: var(--accent2); cursor: pointer; font-weight: 600; padding: 0; text-decoration: underline;">Show sources</button>
+    <div id="references-content" style="display: none; margin-top: 12px; line-height: 1.6; color: var(--muted);">
+      <p style="margin: 0 0 8px 0;"><strong style="color: var(--text);">Origins &amp; Key References:</strong></p>
       <ul style="margin: 0; padding-left: 20px; list-style: none;">
-        <li><a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: #3b82f6;">Andrej Karpathy — "Vibe coding" tweet</a> (2 Feb 2025)</li>
-        <li><a href="https://www.youtube.com/watch?v=BIvILtt164I" target="_blank" style="color: #3b82f6;">Sean Grove — The New Code</a> (AI Engineer World's Fair 2025)</li>
-        <li><a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" style="color: #3b82f6;">GitHub Spec Kit launch</a> (August 2025)</li>
-        <li><a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" target="_blank" style="color: #3b82f6;">Martin Fowler — Understanding Spec-Driven Development</a></li>
+        <li><a href="https://x.com/karpathy/status/1886192184808149383" target="_blank" style="color: var(--accent2);">Andrej Karpathy — "Vibe coding" tweet</a> (2 Feb 2025)</li>
+        <li><a href="https://www.youtube.com/watch?v=BIvILtt164I" target="_blank" style="color: var(--accent2);">Sean Grove — The New Code</a> (AI Engineer World's Fair 2025)</li>
+        <li><a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" style="color: var(--accent2);">GitHub Spec Kit launch</a> (August 2025)</li>
+        <li><a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" target="_blank" style="color: var(--accent2);">Martin Fowler — Understanding Spec-Driven Development</a></li>
       </ul>
-      <p style="margin: 12px 0 8px 0;"><strong>Intellectual Lineage:</strong></p>
+      <p style="margin: 12px 0 8px 0;"><strong style="color: var(--text);">Intellectual Lineage:</strong></p>
       <ul style="margin: 0; padding-left: 20px; list-style: none;">
-        <li><a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: #3b82f6;">Design by Contract</a> (Meyer, 1988)</li>
-        <li><a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: #3b82f6;">Behavior-Driven Development</a> (North, 2006)</li>
-        <li><a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: #3b82f6;">Specification by Example</a> (Adzic, 2011)</li>
-        <li><a href="https://dl.acm.org/doi/10.1145/351240.351266" target="_blank" style="color: #3b82f6;">QuickCheck</a> (Claessen &amp; Hughes, 2000)</li>
+        <li><a href="https://en.wikipedia.org/wiki/Design_by_contract" target="_blank" style="color: var(--accent2);">Design by Contract</a> (Meyer, 1988)</li>
+        <li><a href="https://dannorth.net/introducing-bdd/" target="_blank" style="color: var(--accent2);">Behavior-Driven Development</a> (North, 2006)</li>
+        <li><a href="https://www.manning.com/books/specification-by-example" target="_blank" style="color: var(--accent2);">Specification by Example</a> (Adzic, 2011)</li>
+        <li><a href="https://dl.acm.org/doi/10.1145/351240.351266" target="_blank" style="color: var(--accent2);">QuickCheck</a> (Claessen &amp; Hughes, 2000)</li>
       </ul>
     </div>
   </div>
@@ -1372,7 +1557,7 @@ a short-lived JWT. All auth events are audited.
       options: [
         "The code — get the new behavior working first, document later.",
         "The tests — update tests to reflect the new expected behavior.",
-        "The spec — then regenerate/update tests, then update the implementation.",
+        "The spec — then update tests, then update the implementation.",
         "The README — make sure documentation is up to date."
       ],
       correct: 2,
@@ -1428,10 +1613,10 @@ a short-lived JWT. All auth events are audited.
       <div class="quiz-question">${q.q}</div>
       <div class="quiz-options">
         ${q.options.map((opt, i) => `
-          <div class="quiz-option" onclick="answerQuiz(this, ${i})" data-index="${i}">
+          <button class="quiz-option" onclick="answerQuiz(this, ${i})" data-index="${i}">
             <span class="quiz-option-letter">${letters[i]}</span>
             ${opt}
-          </div>`).join('')}
+          </button>`).join('')}
       </div>
       <div class="quiz-feedback" id="quiz-feedback"></div>
       <div class="quiz-nav">
