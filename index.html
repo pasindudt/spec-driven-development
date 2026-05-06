@@ -1162,7 +1162,7 @@ a short-lived JWT. All auth events are audited.
       <div class="section-label" style="margin-bottom: 0.5rem;">Worked Example</div>
       <h3 style="font-size: 1.2rem; margin-bottom: 0.4rem;">Adding a password reset endpoint — step by step</h3>
       <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 1.75rem; line-height: 1.6;">
-        A concrete walkthrough using real tools. The tools vary — the five stages don't.
+        Three tools, applied consistently end to end — <strong style="color: var(--text);">BMAD</strong>, <strong style="color: var(--text);">Matt Pocock's Skills</strong>, and <strong style="color: var(--text);">GitHub Spec Kit</strong>. Pick one and follow it through all five stages.
       </p>
 
       <div class="walk-step">
@@ -1173,14 +1173,20 @@ a short-lived JWT. All auth events are audited.
             Before you open a spec file, resolve every ambiguity: Who triggers the reset — the user, an admin, or both? What is the token TTL? If a user requests two resets in a row, does the first token expire immediately? What happens when an expired token is used? Each unanswered question is a future production bug.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># With Pocock's /grill-with-docs skill (Claude Code):</span>
+<span class="wc-comment"># BMAD — Analyst agent:</span>
 <span class="wc-label">You:</span>  <span class="wc-str">"Add a password reset flow to the auth service"</span>
-<span class="wc-label">Agent:</span> Challenges assumptions, surfaces unanswered questions — token TTL? email vs. SMS?
-        concurrent reset handling? — and documents decisions in ADRs before any spec is written.
+<span class="wc-label">Agent:</span> Outputs a PRD with acceptance criteria — token TTL? email vs SMS?
+      concurrent reset handling? — you must sign off before any spec is written.
 
-<span class="wc-comment"># With BMAD Analyst agent:</span>
-<span class="wc-label">You:</span>  Describe the feature in plain text
-<span class="wc-label">Agent:</span> Outputs a PRD with acceptance criteria you must sign off before proceeding</div>
+<span class="wc-comment"># Matt Pocock's Skills — /grill-with-docs (Claude Code):</span>
+<span class="wc-cmd">/grill-with-docs</span>  <span class="wc-str">"Add a password reset flow to the auth service"</span>
+→ Challenges every assumption, surfaces unanswered questions,
+  documents decisions in ADRs before any spec is written.
+
+<span class="wc-comment"># GitHub Spec Kit:</span>
+<span class="wc-cmd">/speckit.specify</span>  <span class="wc-str">"Add a password reset flow to the auth service"</span>
+→ Creates <span class="wc-str">specs/password-reset/</span> with a structured <span class="wc-str">spec.md</span> template
+  that forces answers to inputs, outputs, invariants, edge cases — before any code.</div>
         </div>
       </div>
 
@@ -1192,18 +1198,19 @@ a short-lived JWT. All auth events are audited.
             Write inputs, outputs, error codes, invariants, and side effects. This is the contract. Every downstream step — tests, implementation, code review — is measured against it. If it's not in the spec, you cannot assume it's implemented correctly.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># GitHub Spec Kit (slash command inside your agent):</span>
-<span class="wc-cmd">/speckit.specify</span>  describe the feature in plain text
-  → agent creates the feature directory and <span class="wc-str">spec.md</span> with a structured template to fill in
-<span class="wc-comment">  # one-time project setup: uvx --from git+https://github.com/github/spec-kit.git specify init &lt;PROJECT&gt;</span>
+<span class="wc-comment"># BMAD — Architect + PM agents:</span>
+<span class="wc-label">Architect:</span> Reads approved PRD → produces <span class="wc-str">design-doc.md</span> (data model, interfaces)
+<span class="wc-label">PM:</span>        Reads design doc → generates <span class="wc-str">specs/password-reset.yaml</span> and <span class="wc-str">tasks.md</span>
 
-<span class="wc-comment"># Kiro IDE:</span>
-  Describe the feature in plain text → Kiro drafts requirements + design doc
-  → you review and approve before any agent starts writing code
+<span class="wc-comment"># Matt Pocock's Skills:</span>
+Create <span class="wc-str">specs/password-reset.yaml</span> by hand — inputs, outputs, invariants, side effects
+<span class="wc-comment">  (use the YAML format shown in Spec Examples above)</span>
+This file is the context for all subsequent <span class="wc-cmd">/tdd</span> and <span class="wc-cmd">/diagnose</span> calls.
 
-<span class="wc-comment"># Manual (works with any agent):</span>
-  Create <span class="wc-str">specs/password-reset.yaml</span> with inputs, outputs, invariants, side_effects
-  → see the YAML format in Spec Examples above</div>
+<span class="wc-comment"># GitHub Spec Kit:</span>
+<span class="wc-comment">  # Init (one-time): uvx --from git+https://github.com/github/spec-kit.git specify init &lt;PROJECT&gt;</span>
+<span class="wc-cmd">/speckit.constitution</span>  <span class="wc-comment"># one-time — sets non-negotiable project constraints</span>
+Fill in the generated <span class="wc-str">spec.md</span>: inputs, outputs, invariants, error codes, side effects</div>
         </div>
       </div>
 
@@ -1215,15 +1222,19 @@ a short-lived JWT. All auth events are audited.
             Each invariant becomes a test assertion. Each error code becomes a test scenario. Tests written from the spec catch intent violations — not just implementation bugs. A test suite generated from the code will only verify what the code already does.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># Pass the spec to your coding agent:</span>
-<span class="wc-str">"Read specs/password-reset.yaml. Write a test suite that covers every
- invariant and every error case. Tests should fail until the endpoint exists."</span>
+<span class="wc-comment"># BMAD — QA agent:</span>
+<span class="wc-label">QA agent:</span> Reads <span class="wc-str">specs/password-reset.yaml</span>
+→ Generates a full test plan covering every invariant and every error case
+→ Produces failing tests; hands off to the Developer agent.
 
-<span class="wc-comment"># With Pocock's /tdd skill (Claude Code):</span>
-  Agent writes failing tests first. It will not write implementation code until the tests exist.
+<span class="wc-comment"># Matt Pocock's Skills — /tdd (Claude Code):</span>
+<span class="wc-cmd">/tdd</span>  <span class="wc-str">"Read specs/password-reset.yaml. Write tests for every invariant
+ and every error case. Tests must fail until the endpoint exists."</span>
+→ Agent writes failing tests. Refuses to write implementation code until tests exist.
 
-<span class="wc-comment"># With BMAD QA agent:</span>
-  Reads the spec → generates a full test plan → hands off to the Developer agent</div>
+<span class="wc-comment"># GitHub Spec Kit:</span>
+<span class="wc-cmd">/speckit.plan</span>  → generates <span class="wc-str">plan.md</span> and interface contracts from the spec
+<span class="wc-str">"Read specs/password-reset/plan.md. Write a test suite covering every invariant."</span></div>
         </div>
       </div>
 
@@ -1235,17 +1246,21 @@ a short-lived JWT. All auth events are audited.
             The agent has unambiguous context: a spec that defines behavior and tests that define done. It knows exactly what to build and cannot fill missing requirements with guesses. The spec eliminates the class of bugs that come from agents making reasonable-sounding but wrong assumptions.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># Prompt your coding agent (Claude Code, Copilot, etc.):</span>
+<span class="wc-comment"># BMAD — Developer agent:</span>
+<span class="wc-label">Developer:</span> Receives <span class="wc-str">specs/password-reset.yaml</span> + failing tests from QA
+→ Implements <span class="wc-str">POST /auth/reset-password</span>, task by task from <span class="wc-str">tasks.md</span>
+→ Each task is checked against the spec before the next one starts.
+
+<span class="wc-comment"># Matt Pocock's Skills:</span>
 <span class="wc-str">"Implement POST /auth/reset-password.
  Spec:  specs/password-reset.yaml
  Tests: tests/password-reset.test.ts — all must pass."</span>
+<span class="wc-comment">  # /tdd tests already exist; agent implements until they all pass.</span>
 
-<span class="wc-comment"># GitHub Spec Kit (slash commands inside your agent):</span>
-<span class="wc-cmd">/speckit.plan</span>     → generates plan.md and interface contracts
-<span class="wc-cmd">/speckit.tasks</span>    → parses design docs into a dependency-ordered tasks.md; run each task through your agent
-
-<span class="wc-comment"># Kiro IDE:</span>
-  Click "Implement" → agents work through the task list, checking each task against the spec</div>
+<span class="wc-comment"># GitHub Spec Kit:</span>
+<span class="wc-cmd">/speckit.tasks</span>  → parses design docs into a dependency-ordered <span class="wc-str">tasks.md</span>
+<span class="wc-str">"Complete task N from tasks.md.
+ Spec: specs/password-reset/spec.md — all tests must pass before moving on."</span></div>
         </div>
       </div>
 
@@ -1257,14 +1272,19 @@ a short-lived JWT. All auth events are audited.
             Run the tests. A red test tells you which invariant is broken and what correct behavior looks like. If the spec was wrong, update the spec first — then tests, then code. If the code was wrong, fix the code. Either way you know exactly what to change and why.
           </p>
           <div class="walk-code">
-<span class="wc-comment"># CI gate (any stack):</span>
-  Block merges when spec and implementation diverge — spec drift becomes a build failure.
+<span class="wc-comment"># BMAD — QA agent:</span>
+<span class="wc-label">QA agent:</span> Reruns the full test plan against the implementation
+→ Verifies every acceptance criterion from the spec is met
+→ Flags any divergence from the PRD or design doc for human review before merge.
 
-<span class="wc-comment"># Pocock's /diagnose skill:</span>
-  Paste the failing test + the spec → agent traces the failure back to the violated invariant.
+<span class="wc-comment"># Matt Pocock's Skills — /diagnose (Claude Code):</span>
+<span class="wc-cmd">/diagnose</span>
+Paste the failing test + the spec → agent traces the failure back to the violated
+spec invariant, names the spec line, and proposes the minimal fix.
 
-<span class="wc-comment"># Kiro spec hooks:</span>
-  Watch the codebase in real time and alert when a code change breaks a spec invariant.</div>
+<span class="wc-comment"># GitHub Spec Kit — CI integration:</span>
+Add to CI: <span class="wc-cmd">npx speckit verify specs/password-reset/spec.md</span>
+→ Blocks merges when implementation diverges from spec — spec drift becomes a build failure.</div>
         </div>
       </div>
     </div>
@@ -1282,6 +1302,7 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A framework where each development phase is handled by a specialized agent with a defined role: Analyst, Architect, PM, Developer, QA.</div>
         <ul class="eco-bullets">
+          <li><strong>Install:</strong> <code>npx bmad-method init</code> — sets up Analyst, Architect, PM, Developer, and QA agent configs in your project</li>
           <li><strong>Stage 1–2:</strong> Analyst agent turns a brief into a PRD; Architect produces a technical design doc</li>
           <li><strong>Stage 3–4:</strong> PM agent generates spec files and tasks; Developer agent implements against them</li>
           <li><strong>Stage 5:</strong> QA agent verifies implementation against spec acceptance criteria</li>
@@ -1302,6 +1323,7 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A set of slash commands you add to Claude Code that enforce spec-first discipline at each stage. Composable — use only what your team needs.</div>
         <ul class="eco-bullets">
+          <li><strong>Install:</strong> Add skill files from the repo into your <code>.claude/commands/</code> directory</li>
           <li><strong>/grill-with-docs:</strong> paste a requirement → agent challenges assumptions and documents decisions in ADRs</li>
           <li><strong>/tdd:</strong> agent writes failing tests before implementation; refuses to code otherwise</li>
           <li><strong>/diagnose:</strong> structured debugging loop that traces failures back to root cause</li>
@@ -1321,6 +1343,7 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A toolkit that installs agent slash commands into your project, enforcing the spec-first pipeline at each stage. Works with 30+ AI coding agents.</div>
         <ul class="eco-bullets">
+          <li><strong>Init:</strong> <code>uvx --from git+https://github.com/github/spec-kit.git specify init &lt;PROJECT&gt;</code></li>
           <li><strong>/speckit.specify:</strong> creates the feature directory and spec.md template to fill in</li>
           <li><strong>/speckit.plan:</strong> generates plan.md, data-model.md, and interface contracts from the spec</li>
           <li><strong>/speckit.tasks:</strong> parses design docs into a dependency-ordered tasks.md; pass each task to your agent</li>
@@ -1335,26 +1358,6 @@ a short-lived JWT. All auth events are audited.
 
       <div class="eco-card">
         <div class="eco-top">
-          <div class="eco-title">Amazon Kiro</div>
-          <div class="eco-tags">
-            <span class="eco-tag">IDE</span><span class="eco-tag">spec-first</span><span class="eco-tag">commercial</span>
-          </div>
-        </div>
-        <div class="eco-desc">A VS Code-based IDE where specs are first-class project artifacts. Agents cannot start implementation until you review and approve the spec. <em style="color: var(--faint); font-size: 0.82rem;">Review Amazon's data handling policy before using with proprietary code.</em></div>
-        <ul class="eco-bullets">
-          <li><strong>Stage 1–2:</strong> describe in plain text → Kiro generates requirements + design doc for your review</li>
-          <li><strong>Stage 3–4:</strong> approve the spec → agents implement against the task list</li>
-          <li><strong>Stage 5:</strong> spec hooks watch your code in real time and alert when a change violates a spec invariant</li>
-          <li>Best for teams who want the full spec-first loop baked into the IDE</li>
-        </ul>
-        <div class="eco-links">
-          <a href="https://kiro.dev/" target="_blank">Website</a>
-          <a href="https://kiro.dev/blog" target="_blank">Blog</a>
-        </div>
-      </div>
-
-      <div class="eco-card">
-        <div class="eco-top">
           <div class="eco-title">OpenSpec</div>
           <div class="eco-tags">
             <span class="eco-tag">brownfield</span><span class="eco-tag">incremental</span><span class="eco-tag">open-source</span><span class="eco-tag">active</span>
@@ -1362,9 +1365,11 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A lightweight spec framework designed to work with existing codebases. New changes are described as delta specs — what's changing, not a full restatement of the whole system.</div>
         <ul class="eco-bullets">
-          <li>Add a spec layer on top of an existing project without rewriting it from scratch</li>
-          <li>Delta specs describe only what is changing for a given feature; the rest of the codebase is treated as stable context</li>
-          <li>Supports 21 agent tools; available as an npm package</li>
+          <li><strong>Install:</strong> <code>npm install -g @fission-ai/openspec@latest</code> — works with 20+ AI coding assistants including Claude Code, Cursor, Windsurf, and GitHub Copilot</li>
+          <li><strong>/opsx:propose:</strong> create a delta spec and generate all planning artifacts (requirements, tasks) in one step</li>
+          <li><strong>/opsx:explore:</strong> investigate an idea and map its impact on the existing codebase before committing to a change</li>
+          <li><strong>/opsx:apply:</strong> implement tasks from the current change, guided by the delta spec</li>
+          <li><strong>/opsx:sync:</strong> merge a completed delta spec back into the main spec; <strong>/opsx:archive</strong> closes the change when done</li>
           <li>Best for teams adopting SDD incrementally on an existing system</li>
         </ul>
         <div class="eco-links">
@@ -1381,13 +1386,35 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">A methodology with auto-triggered skills and mandatory review checkpoints. Agents cannot proceed past a gate without explicit sign-off.</div>
         <ul class="eco-bullets">
-          <li>Write spec/design doc → triggers spec review gate; you must approve before agents run</li>
-          <li>Auto-triggered TDD skill enforces tests-first — no implementation without passing tests</li>
-          <li>Subagents handle implementation in parallel; each milestone requires human review</li>
+          <li><strong>Install:</strong> <code>git clone https://github.com/obra/superpowers</code> — available on the Claude Code marketplace, Cursor, GitHub Copilot CLI, and others; add skills per the README</li>
+          <li><strong>superpowers:brainstorming:</strong> refines rough ideas through questions, explores alternatives, and presents a design in sections — you validate each before anything is built</li>
+          <li><strong>superpowers:writing-plans:</strong> after design approval, produces a detailed implementation plan broken into bite-sized tasks; agents work from git worktrees for isolation</li>
+          <li><strong>superpowers:executing-plans:</strong> runs the plan task-by-task with inline self-review checklists at each step; no task proceeds without the prior one passing</li>
           <li>Best for long autonomous runs where strong guardrails matter more than speed</li>
         </ul>
         <div class="eco-links">
           <a href="https://github.com/obra/superpowers" target="_blank">Repo</a>
+        </div>
+      </div>
+
+      <div class="eco-card">
+        <div class="eco-top">
+          <div class="eco-title">Amazon Kiro</div>
+          <div class="eco-tags">
+            <span class="eco-tag">IDE</span><span class="eco-tag">spec-first</span><span class="eco-tag">commercial</span>
+          </div>
+        </div>
+        <div class="eco-desc">A VS Code-based IDE where specs are first-class project artifacts. Agents cannot start implementation until you review and approve the spec. <em style="color: var(--faint); font-size: 0.82rem;">Review Amazon's data handling policy before using with proprietary code.</em></div>
+        <ul class="eco-bullets">
+          <li><strong>Download:</strong> <a href="https://kiro.dev/" target="_blank" style="color: var(--accent2);">kiro.dev</a> — VS Code-based IDE; sign in with your AWS account to get started</li>
+          <li><strong>Stage 1–2:</strong> describe in plain text → Kiro generates requirements + design doc for your review</li>
+          <li><strong>Stage 3–4:</strong> approve the spec → agents implement against the task list</li>
+          <li><strong>Stage 5:</strong> spec hooks watch your code in real time and alert when a change violates a spec invariant</li>
+          <li>Best for teams who want the full spec-first loop baked into the IDE</li>
+        </ul>
+        <div class="eco-links">
+          <a href="https://kiro.dev/" target="_blank">Website</a>
+          <a href="https://kiro.dev/blog" target="_blank">Blog</a>
         </div>
       </div>
 
@@ -1400,10 +1427,10 @@ a short-lived JWT. All auth events are audited.
         </div>
         <div class="eco-desc">You don't need a framework to start practicing SDD. Pick one rule: the agent doesn't write code until a spec file exists.</div>
         <ul class="eco-bullets">
-          <li><strong>Week 1:</strong> Create a <code>specs/</code> directory. Before your next feature, write a spec in YAML or Markdown (use the format from Spec Examples above). Pass it to your agent instead of a plain English description. Observe what changes.</li>
-          <li><strong>Week 2:</strong> Add a second rule: agent generates tests from the spec before writing any implementation. No tests, no code.</li>
-          <li><strong>Week 3:</strong> Add a CI check that fails if a new feature directory has no corresponding spec file in <code>specs/</code>.</li>
-          <li><strong>Week 4+:</strong> Add traceability — every PR description links to the spec line that motivated each change. Review spec diffs as seriously as code diffs.</li>
+          <li><strong>1:</strong> Create a <code>specs/</code> directory. Before your next feature, write a spec in YAML or Markdown (use the format from Spec Examples above). Pass it to your agent instead of a plain English description. Observe what changes.</li>
+          <li><strong>2:</strong> Add a second rule: agent generates tests from the spec before writing any implementation. No tests, no code.</li>
+          <li><strong>3:</strong> Add a CI check that fails if a new feature directory has no corresponding spec file in <code>specs/</code>.</li>
+          <li><strong>4:</strong> Add traceability — every PR description links to the spec line that motivated each change. Review spec diffs as seriously as code diffs.</li>
         </ul>
       </div>
 
